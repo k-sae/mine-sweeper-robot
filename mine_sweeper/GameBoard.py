@@ -1,12 +1,16 @@
 from mine_sweeper.singleton import Singleton
 from mine_sweeper.Graph import Graph
 from mine_sweeper.Node import Node
+from random import randint
+
 
 @Singleton
 class GameBoard:
     def __init__(self):
         # need to recive row & col numbers
-        self.__gameGraph =Graph(self.getNodesConnection(self.findMinesweeperConnections(5,5),self.initGameList(5,5)))
+        self.row = 0
+        self.col = 0
+        self.__gameGraph = Graph(self.getNodesConnection(self.findMinesweeperConnections(self.row , self.col),self.initGameList(self.row,self.col)))
         self.__gameState = []
         self.currentState = []
         pass
@@ -57,3 +61,16 @@ class GameBoard:
 
 
 
+    def setMines(self , node :Node):
+        persent = 10/64
+        minesNum = round(self.row*self.col*persent)
+        keys =[]
+        for key in self.__gameGraph._graph:
+            keys.append(key)
+        while (minesNum>0):
+            rand = randint(0,len(keys)-1)
+            if((not self.__gameGraph.is_connected(node,keys[rand]) )or (not keys[0].mine)):
+                keys[rand].mine=True
+                for node  in self.__gameGraph._graph[keys[rand]]:
+                    node.weight+=1
+                    minesNum-=1
