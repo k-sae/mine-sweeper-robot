@@ -11,4 +11,3 @@ class GameBoard:
 
     def discover(self, node) -> bool:
         pass
-
