@@ -60,7 +60,7 @@ class GameBoard:
                 return bord
 
 
-
+# recive first clicked node
     def setMines(self , node :Node):
         persent = 10/64
         minesNum = round(self.row*self.col*persent)
