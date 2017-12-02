@@ -7,12 +7,13 @@ from mine_sweeper.GameBoard import GameBoard
 
 
 class Board:
-    def __init__(self, master, size, game_board: GameBoard):
+    def __init__(self, master, size, game_board: GameBoard, controller):
         # Initialize the UI
         self.master = master
         self.master.title("Minesweeper")
         self.size = size
         self.game_board = game_board
+        self.controller = controller
 
         frame = Frame(master)
         # Make the window responsive
@@ -46,7 +47,7 @@ class Board:
             for y in range(self.size[1]):
                 i = len(self.boxes)
                 Grid.rowconfigure(frame, y + 1, weight=1)
-                self.boxes.append(Button(frame, font=('TkDefaultFont', 20), text="", bg="darkgrey"))
+                self.boxes.append(Button(frame, font=('TkDefaultFont', 20), text=" ", bg="darkgrey"))
                 # Lay the boxes on the board
                 self.boxes[i].grid(column=x, row=y + 1, sticky=N + S + E + W)
 
