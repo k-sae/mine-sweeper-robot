@@ -10,7 +10,7 @@ class GameBoard:
         # need to recive row & col numbers
         self.row = 6
         self.col = 6
-        self.__gameGraph = Graph(self.getNodesConnection(self.findMinesweeperConnections(),self.initGameList()))
+        self.__gameGraph = Graph(self._getNodesConnection(self._findMinesweeperConnections(),self._initGameList()))
         self.__gameState = []
         self.currentState = []
         pass
@@ -18,7 +18,7 @@ class GameBoard:
     def discover(self, node) -> bool:
         pass
 
-    def findMinesweeperConnections(self):
+    def _findMinesweeperConnections(self):
         row=self.row
         col=self.col
         nodePairs = []
@@ -44,7 +44,7 @@ class GameBoard:
 
         return nodePairs
 
-    def getNodesConnection(self,pairs, data):
+    def _getNodesConnection(self,pairs, data):
         graphData = []
         for (r1, c1), (r2, c2) in pairs:
             pair = (data[r1][c1], data[r2][c2])
@@ -52,7 +52,7 @@ class GameBoard:
         return graphData
 
 
-    def initGameList(self):
+    def _initGameList(self):
         bord = [[] for i in range(0, self.row)]
         for r in range(0, self.row):
             for c in range(0, self.col):
@@ -75,3 +75,10 @@ class GameBoard:
                 for node  in self.__gameGraph._graph[keys[rand]]:
                     node.weight+=1
                     minesNum-=1
+
+
+    def getGraphNodesAsList(self):
+        list = [[] for dump in range(0,self.row)]
+        for r in range(0,self.row):
+            for c in range(0,self.col):
+                list[r].append(self.__gameGraph._graph.keys()[(self.row*self.col)+self.col])
