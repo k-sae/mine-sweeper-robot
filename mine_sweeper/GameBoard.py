@@ -79,6 +79,12 @@ class GameBoard:
 
     def getGraphNodesAsList(self):
         list = [[] for dump in range(0,self.row)]
-        for r in range(0,self.row):
-            for c in range(0,self.col):
-                list[r].append(self.__gameGraph._graph.keys()[(self.row*self.col)+self.col])
+        row=0
+        col=0
+        for key in self.__gameGraph._graph.keys():
+            if(col==5):
+                col=0
+                row+=1
+            list[row].append(key)
+            col += 1
+
