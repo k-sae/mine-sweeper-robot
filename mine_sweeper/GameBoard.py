@@ -8,9 +8,9 @@ from random import randint
 class GameBoard:
     def __init__(self):
         # need to recive row & col numbers
-        self.row = 0
-        self.col = 0
-        self.__gameGraph = Graph(self.getNodesConnection(self.findMinesweeperConnections(self.row , self.col),self.initGameList(self.row,self.col)))
+        self.row = 6
+        self.col = 6
+        self.__gameGraph = Graph(self.getNodesConnection(self.findMinesweeperConnections(),self.initGameList()))
         self.__gameState = []
         self.currentState = []
         pass
@@ -18,7 +18,9 @@ class GameBoard:
     def discover(self, node) -> bool:
         pass
 
-    def findMinesweeperConnections(self,row, col):
+    def findMinesweeperConnections(self):
+        row=self.row
+        col=self.col
         nodePairs = []
         for r in range(0, row):
             for c in range(0, col):
@@ -50,14 +52,13 @@ class GameBoard:
         return graphData
 
 
-    def initGameList(self,row,col):
-        bord = [[] for i in range(0, row)]
-        for r in range(0, row):
-            for c in range(0, col):
+    def initGameList(self):
+        bord = [[] for i in range(0, self.row)]
+        for r in range(0, self.row):
+            for c in range(0, self.col):
                 node = Node()
-                node.pos = str(r) + "," + str(c)
                 bord[r].append(node)
-                return bord
+        return bord
 
 
 # recive first clicked node
@@ -69,7 +70,7 @@ class GameBoard:
             keys.append(key)
         while (minesNum>0):
             rand = randint(0,len(keys)-1)
-            if((not self.__gameGraph.is_connected(node,keys[rand]) )or (not keys[0].mine)):
+            if((not self.__gameGraph.is_connected(node,keys[rand]) )and (not keys[rand].mine)):
                 keys[rand].mine=True
                 for node  in self.__gameGraph._graph[keys[rand]]:
                     node.weight+=1
