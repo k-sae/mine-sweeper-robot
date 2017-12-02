@@ -46,8 +46,7 @@ class Board:
             for y in range(self.size[1]):
                 i = len(self.boxes)
                 Grid.rowconfigure(frame, y + 1, weight=1)
-
-                self.boxes.append(Button(frame, font=('TkDefaultFont', 20), text=" ", bg="darkgrey"))
+                self.boxes.append(Button(frame, font=('TkDefaultFont', 20), text="", bg="darkgrey"))
                 # Lay the boxes on the board
                 self.boxes[i].grid(column=x, row=y + 1, sticky=N + S + E + W)
 
