@@ -50,14 +50,16 @@ class Board:
                 Grid.rowconfigure(frame, y + 1, weight=1)
                 self.boxes.append(Button(frame, font=('TkDefaultFont', 20), text=" ", bg="darkgrey"))
                 # Lay the boxes on the board
-                self.boxes[i].grid(column=x, row=y + 1, sticky=N + S + E + W)
-                self.boxes[i].bind('<Button-1>',self.lclickwrapper(x,y))
+                self.boxes[i].grid(row=x + 1, column=y, sticky=N + S + E + W)
+                self.boxes[i].bind('<Button-1>', self.lclickwrapper(x, y))
 
-    def lclickwrapper(self,x,y):
-        list=self.game_board.getGraphNodesAsList()
-        return lambda Button: self.update_text(list[x][y])
-    def update_text(self,value):
+    def lclickwrapper(self, x, y):
+        nodes = self.game_board.getGraphNodesAsList()
+        return lambda Button: self.update_text(nodes[x][y])
+
+    def update_text(self, value):
         print(value)
+
     def update_timer(self):
         timer = time.time() - self.start_time
         timerstr = datetime.datetime.fromtimestamp(timer).strftime('%M:%S')
