@@ -6,17 +6,20 @@ from random import randint
 
 @Singleton
 class GameBoard:
-    def __init__(self,row=6,col=6):
+    def __init__(self):
         # need to recive row & col numbers
-        self.row =row
-        self.col = col
-        self.__gameGraph = Graph(self._getNodesConnection(self._findMinesweeperConnections(),self._initGameList()))
         self.__gameState = []
         self.currentState = []
         pass
 
     def discover(self, node) -> bool:
         pass
+
+    def generateInitialState(self,row,col):
+        self.row=row
+        self.col=col
+        self.__gameGraph = Graph(self._getNodesConnection(self._findMinesweeperConnections(),self._initGameList()))
+
 
     def _findMinesweeperConnections(self):
         row=self.row
