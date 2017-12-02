@@ -81,7 +81,7 @@ class GameBoard:
         list = [[] for dump in range(0,self.row)]
         row=0
         col=0
-        for key in self.__gameGraph._graph.keys():
+        for key in self.__gameGraph._graph:
             if(col==5):
                 col=0
                 row+=1
