@@ -4,7 +4,7 @@ import datetime
 from tkinter import *
 from tkinter.messagebox import *
 from mine_sweeper.GameBoard import GameBoard
-
+from mine_sweeper.Node import Node
 
 class Board:
     def __init__(self, master, size, game_board: GameBoard, controller):
