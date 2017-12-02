@@ -25,6 +25,6 @@ if __name__ == "__main__":
     photo = ImageTk.PhotoImage(image)
     label = ttk.Label(root, image=photo)
     label.bind('<Configure>', resize_image)
-    label.pack(fill=BOTH, expand=YES)
-    Board(root,(8, 8),game_board)'''
+    label.pack(fill=BOTH, expand=YES)'''
+    Board(root,(8, 8),game_board)
     root.mainloop()
