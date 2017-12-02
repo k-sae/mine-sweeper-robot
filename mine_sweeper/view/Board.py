@@ -13,7 +13,7 @@ class Board:
         self.master.title("Minesweeper")
         self.size = size
         self.game_board = game_board
-        self.controller = controller
+        self.controller = controller(self.game_board)
 
         frame = Frame(master)
         # Make the window responsive
