@@ -40,7 +40,8 @@ class Board:
         self.minesLBL = Label(frame, font=("Helvetica", 16),
                               text="Mines left: " + str(self.flags) + "/" + str(self.mines))
         self.minesLBL.grid(column=int(self.size[1] / 2), row=0, sticky=N + S + E + W, columnspan=int(self.size[1] / 2))
-
+        #get graph nodes
+        print(game_board.getGraphNodesAsList())
         # Create boxes upon the game size
         for x in range(self.size[0]):
             Grid.columnconfigure(frame, x, weight=1)
