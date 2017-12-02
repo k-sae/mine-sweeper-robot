@@ -6,10 +6,10 @@ from random import randint
 
 @Singleton
 class GameBoard:
-    def __init__(self):
+    def __init__(self,row=6,col=6):
         # need to recive row & col numbers
-        self.row = 6
-        self.col = 6
+        self.row =row
+        self.col = col
         self.__gameGraph = Graph(self._getNodesConnection(self._findMinesweeperConnections(),self._initGameList()))
         self.__gameState = []
         self.currentState = []
@@ -82,7 +82,7 @@ class GameBoard:
         row=0
         col=0
         for key in self.__gameGraph._graph:
-            if(col==5):
+            if(col==self.col):
                 col=0
                 row+=1
             list[row].append(key)
