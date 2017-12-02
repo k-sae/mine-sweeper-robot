@@ -90,4 +90,5 @@ class GameBoard:
                 row+=1
             list[row].append(key)
             col += 1
+        return list
 
