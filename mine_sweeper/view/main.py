@@ -1,12 +1,8 @@
 from tkinter import *
-from mine_sweeper.view.Board import Board
-from mine_sweeper.GameBoard import GameBoard
-from tkinter import ttk
-from PIL import ImageTk, Image
+from mine_sweeper.view.Menu import Menu
 
 if __name__ == "__main__":
 
-    game_board = GameBoard.get_instance()
     root = Tk()
     root.minsize(640, 640)
     '''root.geometry('640x640')
@@ -26,5 +22,7 @@ if __name__ == "__main__":
     label = ttk.Label(root, image=photo)
     label.bind('<Configure>', resize_image)
     label.pack(fill=BOTH, expand=YES)'''
-    Board(root,(8, 8),game_board)
+
+    Menu(root)
     root.mainloop()
+

@@ -7,12 +7,13 @@ from mine_sweeper.GameBoard import GameBoard
 from mine_sweeper.Node import Node
 
 class Board:
-    def __init__(self, master, size, game_board: GameBoard):
+    def __init__(self, master, size, game_board: GameBoard, controller):
         # Initialize the UI
         self.master = master
         self.master.title("Minesweeper")
         self.size = size
         self.game_board = game_board
+        self.controller = controller(self.game_board)
 
         frame = Frame(master)
         # Make the window responsive
