@@ -13,14 +13,14 @@ class Menu:
         self.master.title("Minesweeper")
         self.frame = Frame(self.master)
 
-        self.image = Image.open('resources/13950123000568_PhotoI.jpg')
-        self.img_copy = self.image.copy()
+        # self.image = Image.open('resources/13950123000568_PhotoI.jpg')
+        # self.img_copy = self.image.copy()
+        #
+        # self.background_image = ImageTk.PhotoImage(self.image)
 
-        self.background_image = ImageTk.PhotoImage(self.image)
-
-        self.background = Label(self.frame, image=self.background_image)
+        self.background = Label(self.frame)
         self.background.pack(fill=BOTH, expand=YES)
-        self.background.bind('<Configure>', self._resize_image)
+        # self.background.bind('<Configure>', self._resize_image)
 
         self.widthLbl = Label(self.background, text='Width: ')
         self.widthLbl.pack()
