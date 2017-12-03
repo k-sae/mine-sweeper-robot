@@ -14,8 +14,26 @@ class GameBoard:
         self.game_graph = Graph()
         self.__game_data = {}
 
-    def discover(self, node) -> bool:
-        pass
+    # TODO
+    # this function is  responsible for discovering the game board
+    # all data for board is preserved game_data
+    # see how to access it in the example below
+    # modify the function as u like but by using default values
+    def discover(self, node: Node) -> bool:
+        node_data = self.__game_data[node]
+        node_data.__class__ = NodeData
+        if node_data.mine:
+            # mine is hit
+            return False
+        elif node_data.weight == 0:
+            # TODO
+            # keep discovering with connected nodes till a node with data found
+            # i suggest bread first search (recursive)
+            pass
+
+        # in all cases update the discovered node
+        node.node_data = node_data
+        return True
 
     def generate_initial_state(self, row: int, col: int):
         self.row = row
@@ -63,6 +81,7 @@ class GameBoard:
         for r in range(0, self.row):
             for c in range(0, self.col):
                 node = Node()
+                self.__game_data[node] = NodeData()
                 bord[r].append(node)
         return bord
 
@@ -76,12 +95,9 @@ class GameBoard:
         while mines_num > 0:
             rand = randint(0, len(keys) - 1)
             if (not self.game_graph.is_connected(node, keys[rand])) and (not keys[rand].mine):
-                self.__game_data[keys[rand]] = NodeData(True)
+                self.__game_data[keys[rand]].mine = True
                 for node in self.game_graph.m_graph[keys[rand]]:
-                    if node in self.__game_data:
-                        self.__game_data[node].weight += 1
-                    else:
-                        self.__game_data[node] = NodeData()
+                    self.__game_data[node].weight += 1
                     mines_num -= 1
 
     def get_graph_nodes_as_list(self):
