@@ -28,31 +28,32 @@ class GameBoard:
         for r in range(0, row):
             for c in range(0, col):
                 current = (r, c)
-                if (c + 1 < col):
+                if c + 1 < col:
                     node_pairs.append((current, (r, c + 1)))
-                if (c - 1 >= 0):
+                if c - 1 >= 0:
                     node_pairs.append((current, (r, c - 1)))
-                if (r + 1 < row):
+                if r + 1 < row:
                     node_pairs.append((current, (r + 1, c)))
-                if (r - 1 >= 0):
+                if r - 1 >= 0:
                     node_pairs.append((current, (r - 1, c)))
-                if (r - 1 >= 0 and c + 1 < col):
+                if r - 1 >= 0 and c + 1 < col:
                     node_pairs.append((current, (r - 1, c + 1)))
-                if (r - 1 >= 0 and c - 1 >= 0):
+                if r - 1 >= 0 and c - 1 >= 0:
                     node_pairs.append((current, (r - 1, c - 1)))
-                if (r + 1 < row and c + 1 < col):
+                if r + 1 < row and c + 1 < col:
                     node_pairs.append((current, (r + 1, c + 1)))
-                if (r + 1 < row and c - 1 >= 0):
+                if r + 1 < row and c - 1 >= 0:
                     node_pairs.append((current, (r + 1, c - 1)))
 
         return node_pairs
 
-    def __get_nodes_connection(self, pairs, data):
-        graphData = []
+    @staticmethod
+    def __get_nodes_connection(pairs, data):
+        graph_data = []
         for (r1, c1), (r2, c2) in pairs:
             pair = (data[r1][c1], data[r2][c2])
-            graphData.append(pair)
-        return graphData
+            graph_data.append(pair)
+        return graph_data
 
     def __init_game_list(self):
         bord = [[] for i in range(0, self.row)]
@@ -62,29 +63,29 @@ class GameBoard:
                 bord[r].append(node)
         return bord
 
-    # recive first clicked node
+    # receive first clicked node
     def set_mines(self, node: Node):
-        persent = 10 / 64
-        minesNum = round(self.row * self.col * persent)
+        present = 10 / 64
+        mines_num = round(self.row * self.col * present)
         keys = []
-        for key in self.__gameGraph._graph:
+        for key in self.__gameGraph.m_graph:
             keys.append(key)
-        while (minesNum > 0):
+        while mines_num > 0:
             rand = randint(0, len(keys) - 1)
-            if ((not self.__gameGraph.is_connected(node, keys[rand])) and (not keys[rand].mine)):
+            if (not self.__gameGraph.is_connected(node, keys[rand])) and (not keys[rand].mine):
                 keys[rand].mine = True
-                for node in self.__gameGraph._graph[keys[rand]]:
+                for node in self.__gameGraph.m_graph[keys[rand]]:
                     node.weight += 1
-                    minesNum -= 1
+                    mines_num -= 1
 
     def get_graph_nodes_as_list(self):
-        list = [[] for dump in range(0, self.row)]
+        m_list = [[] for dump in range(0, self.row)]
         row = 0
         col = 0
-        for key in self.__gameGraph._graph:
-            if (col == self.col):
+        for key in self.__gameGraph.m_graph:
+            if col == self.col:
                 col = 0
                 row += 1
-            list[row].append(key)
+            m_list[row].append(key)
             col += 1
-        return list
+        return m_list
