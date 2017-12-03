@@ -13,6 +13,7 @@ class Board:
         self.master.title("Minesweeper")
         self.size = size
         self.game_board = game_board
+        # --test
         game_board.set_mines(game_board.get_graph_nodes_as_list()[0][0])
         self.controller = controller(self.game_board)
         frame = Frame(master)
@@ -62,6 +63,8 @@ class Board:
         return lambda Button: self.update_text(nodes[x][y])
 
     def update_text(self, value):
+        # --test
+        print(value)
         print(self.game_board.discover(value))
 
     def update_timer(self):
