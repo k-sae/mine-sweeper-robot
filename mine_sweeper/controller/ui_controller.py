@@ -1,6 +1,6 @@
-from mine_sweeper.GameBoard import GameBoard
+from mine_sweeper.controller.game_board import GameBoard
 
 
-class MouseController:
+class UiController:
     def __init__(self, game_board: GameBoard):
         self.game_board = game_board

@@ -3,6 +3,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 
 from mine_sweeper.controller.ai_controller import *
+from mine_sweeper.controller.ui_controller import *
 from mine_sweeper.view.board import Board
 
 
@@ -33,7 +34,7 @@ class Menu:
 
         self.AIBtn = Button(self.background, text='AI Controller', command=lambda: self.invokeBoard(AiController))
         self.AIBtn.pack()
-        self.MouseBtn = Button(self.background, text='Mouse Controller', command=lambda: self.invokeBoard(MouseController))
+        self.MouseBtn = Button(self.background, text='Mouse Controller', command=lambda: self.invokeBoard(UiController))
         self.MouseBtn.pack()
 
         self.frame.pack(fill=BOTH, expand=YES)
