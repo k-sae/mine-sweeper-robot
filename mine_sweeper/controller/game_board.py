@@ -2,6 +2,7 @@ from random import randint
 
 from mine_sweeper.model.graph import Graph
 from mine_sweeper.model.node import Node
+from mine_sweeper.model.node_data import NodeData
 from mine_sweeper.model.singleton import Singleton
 
 
@@ -11,6 +12,7 @@ class GameBoard:
         self.row = 8
         self.col = 8
         self.game_graph = Graph()
+        self.__game_data = {}
 
     def discover(self, node) -> bool:
         pass
@@ -74,9 +76,12 @@ class GameBoard:
         while mines_num > 0:
             rand = randint(0, len(keys) - 1)
             if (not self.game_graph.is_connected(node, keys[rand])) and (not keys[rand].mine):
-                keys[rand].mine = True
+                self.__game_data[keys[rand]] = NodeData(True)
                 for node in self.game_graph.m_graph[keys[rand]]:
-                    node.weight += 1
+                    if node in self.__game_data:
+                        self.__game_data[node].weight += 1
+                    else:
+                        self.__game_data[node] = NodeData()
                     mines_num -= 1
 
     def get_graph_nodes_as_list(self):
