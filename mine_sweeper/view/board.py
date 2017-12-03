@@ -10,7 +10,6 @@ class Board:
     def __init__(self, master, size, game_board: GameBoard, controller):
         # Initialize the UI
         self.master = master
-        self.master.title("Minesweeper")
         self.size = size
         self.game_board = game_board
         # --test
@@ -78,7 +77,7 @@ class Board:
         showinfo("Game Over", "You Lose!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
-            self.__init__(self.master, self.size)
+            self.__init__(self.master, self.size, self.game_board, self.controller.__class__)
         else:
             self.master.destroy()
 
@@ -87,6 +86,6 @@ class Board:
         showinfo("Victory!", "You Win!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
-            self.__init__(self.master, self.size)
+            self.__init__(self.master, self.size, self.game_board, self.controller.__class__)
         else:
             self.master.destroy()
