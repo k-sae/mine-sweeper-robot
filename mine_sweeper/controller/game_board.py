@@ -94,7 +94,7 @@ class GameBoard:
             keys.append(key)
         while mines_num > 0:
             rand = randint(0, len(keys) - 1)
-            if (not self.game_graph.is_connected(node, keys[rand])) and (not keys[rand].mine):
+            if (not self.game_graph.is_connected(node, keys[rand])) and (not self.__game_data[keys[rand]].mine):
                 self.__game_data[keys[rand]].mine = True
                 for node in self.game_graph.m_graph[keys[rand]]:
                     self.__game_data[node].weight += 1
