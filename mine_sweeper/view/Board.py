@@ -1,10 +1,10 @@
-import time
-import random
 import datetime
+import time
 from tkinter import *
 from tkinter.messagebox import *
-from mine_sweeper.GameBoard import GameBoard
-from mine_sweeper.Node import Node
+
+from mine_sweeper.controller.GameBoard import GameBoard
+
 
 class Board:
     def __init__(self, master, size, game_board: GameBoard, controller):

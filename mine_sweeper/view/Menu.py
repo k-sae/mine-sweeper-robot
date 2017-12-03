@@ -1,10 +1,9 @@
 from tkinter import *
-from tkinter import ttk
+
 from PIL import ImageTk, Image
-from mine_sweeper.view.Board import Board
-from mine_sweeper.GameBoard import GameBoard
+
 from mine_sweeper.controller.AiController import *
-from mine_sweeper.controller.MouseController import *
+from mine_sweeper.view.Board import Board
 
 
 class Menu:

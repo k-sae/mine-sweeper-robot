@@ -1,4 +1,4 @@
-from mine_sweeper.GameBoard import GameBoard
+from mine_sweeper.controller.GameBoard import GameBoard
 
 
 class AiController:
