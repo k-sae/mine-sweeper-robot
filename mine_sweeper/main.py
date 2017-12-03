@@ -1,5 +1,5 @@
 from tkinter import *
-from mine_sweeper.view.Menu import Menu
+from mine_sweeper.view.menu import Menu
 
 if __name__ == "__main__":
 

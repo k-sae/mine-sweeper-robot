@@ -1,7 +1,7 @@
 from random import randint
 
-from mine_sweeper.model.Graph import Graph
-from mine_sweeper.model.Node import Node
+from mine_sweeper.model.graph import Graph
+from mine_sweeper.model.node import Node
 from mine_sweeper.model.singleton import Singleton
 
 

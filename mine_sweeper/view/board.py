@@ -3,7 +3,7 @@ import time
 from tkinter import *
 from tkinter.messagebox import *
 
-from mine_sweeper.controller.GameBoard import GameBoard
+from mine_sweeper.controller.game_board import GameBoard
 
 
 class Board:
