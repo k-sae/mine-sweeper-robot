@@ -41,7 +41,7 @@ class Board:
                               text="Mines left: " + str(self.flags) + "/" + str(self.mines))
         self.minesLBL.grid(column=int(self.size[1] / 2), row=0, sticky=N + S + E + W, columnspan=int(self.size[1] / 2))
         #get graph nodes
-        print(game_board.getGraphNodesAsList())
+        print(game_board.get_graph_nodes_as_list())
         # Create boxes upon the game size
         for x in range(self.size[0]):
             Grid.columnconfigure(frame, x, weight=1)
@@ -54,7 +54,7 @@ class Board:
                 self.boxes[i].bind('<Button-1>', self.lclickwrapper(x, y))
 
     def lclickwrapper(self, x, y):
-        nodes = self.game_board.getGraphNodesAsList()
+        nodes = self.game_board.get_graph_nodes_as_list()
         return lambda Button: self.update_text(nodes[x][y])
 
     def update_text(self, value):
