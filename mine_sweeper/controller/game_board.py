@@ -96,15 +96,16 @@ class GameBoard:
             rand = randint(0, len(keys) - 1)
             if (not self.game_graph.is_connected(node, keys[rand])) and (not self.__game_data[keys[rand]].mine):
                 self.__game_data[keys[rand]].mine = True
-                for node in self.game_graph.m_graph[keys[rand]]:
-                    self.__game_data[node].weight += 1
-                    mines_num -= 1
+                mines_num -= 1
+                for n in self.game_graph.m_graph[keys[rand]]:
+                    self.__game_data[n].weight += 1
+
 
     def get_graph_nodes_as_list(self):
         m_list = [[] for dump in range(0, self.row)]
         row = 0
         col = 0
-        for key in self.game_graph.m_graph:
+        for key in self.__game_data:
             if col == self.col:
                 col = 0
                 row += 1
