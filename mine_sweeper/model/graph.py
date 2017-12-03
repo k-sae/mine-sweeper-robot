@@ -4,10 +4,9 @@ from collections import defaultdict
 class Graph(object):
     """ Graph data structure, undirected by default. """
 
-    def __init__(self, connections, directed=False):
+    def __init__(self, directed=False):
         self.m_graph = defaultdict(set)
         self._directed = directed
-        self.add_connections(connections)
 
     def add_connections(self, connections):
         """ Add connections (list of tuple pairs) to graph """

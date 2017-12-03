@@ -8,18 +8,19 @@ from mine_sweeper.model.singleton import Singleton
 @Singleton
 class GameBoard:
     def __init__(self):
-        # need to recive row & col numbers
-        self.__gameState = []
-        self.currentState = []
-        pass
+        self.row = 8
+        self.col = 8
+        self.game_graph = Graph()
 
     def discover(self, node) -> bool:
         pass
 
-    def generate_initial_state(self, row, col):
+    def generate_initial_state(self, row: int, col: int):
         self.row = row
         self.col = col
-        self.__gameGraph = Graph(self.__get_nodes_connection(self.__find_minesweeper_connections(), self.__init_game_list()))
+        self.game_graph.add_connections(
+            self.__get_nodes_connection(
+                self.__find_minesweeper_connections(), self.__init_game_list()))
 
     def __find_minesweeper_connections(self):
         row = self.row
@@ -68,13 +69,13 @@ class GameBoard:
         present = 10 / 64
         mines_num = round(self.row * self.col * present)
         keys = []
-        for key in self.__gameGraph.m_graph:
+        for key in self.game_graph.m_graph:
             keys.append(key)
         while mines_num > 0:
             rand = randint(0, len(keys) - 1)
-            if (not self.__gameGraph.is_connected(node, keys[rand])) and (not keys[rand].mine):
+            if (not self.game_graph.is_connected(node, keys[rand])) and (not keys[rand].mine):
                 keys[rand].mine = True
-                for node in self.__gameGraph.m_graph[keys[rand]]:
+                for node in self.game_graph.m_graph[keys[rand]]:
                     node.weight += 1
                     mines_num -= 1
 
@@ -82,7 +83,7 @@ class GameBoard:
         m_list = [[] for dump in range(0, self.row)]
         row = 0
         col = 0
-        for key in self.__gameGraph.m_graph:
+        for key in self.game_graph.m_graph:
             if col == self.col:
                 col = 0
                 row += 1
