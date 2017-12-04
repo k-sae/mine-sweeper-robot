@@ -19,21 +19,30 @@ class GameBoard:
     # all data for board is preserved game_data
     # see how to access it in the example below
     # modify the function as u like but by using default values
-    def discover(self, node: Node) -> bool:
+    def discover(self, node: Node, discovered=set()) -> set():
         node_data = self.__game_data[node]
         node_data.__class__ = NodeData
+        node.node_data = node_data
+
         if node_data.mine:
             # mine is hit
-            return False
+            return {node}
         elif node_data.weight == 0:
+            discovered.add(node)
+            all_adjecent=self.game_graph.m_graph[node]
+            #loop to un discoverd nodes
+            for maybe_un_discovered in all_adjecent:
+                if(not maybe_un_discovered in discovered):
+                    discovered.update(self.discover(maybe_un_discovered,discovered))
+            return discovered
             # TODO
             # keep discovering with connected nodes till a node with data found
             # i suggest bread first search (recursive)
-            pass
-
+        else:
+                return {node}
         # in all cases update the discovered node
-        node.node_data = node_data
-        return True
+
+
 
     def generate_initial_state(self, row: int, col: int):
         self.row = row
@@ -94,7 +103,7 @@ class GameBoard:
             keys.append(key)
         while mines_num > 0:
             rand = randint(0, len(keys) - 1)
-            if (not self.game_graph.is_connected(node, keys[rand])) and (not self.__game_data[keys[rand]].mine):
+            if (not self.game_graph.is_connected(node, keys[rand])) and (not keys[rand] is node) and (not self.__game_data[keys[rand]].mine):
                 self.__game_data[keys[rand]].mine = True
                 mines_num -= 1
                 for n in self.game_graph.m_graph[keys[rand]]:

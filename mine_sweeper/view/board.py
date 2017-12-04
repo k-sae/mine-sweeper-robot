@@ -64,7 +64,13 @@ class Board:
     def lclick_handler(self, value, i):
         # --test
         print(value)
-        print(self.game_board.discover(value))
+        self.game_board.discover(value)
+        nodes =self.game_board.get_graph_nodes_as_list()
+        for r in nodes:
+            for c in r:
+                print(c.__str__() , end=" | ")
+            print("\n")
+
 
         if not self.game_board.discover(value):
             self.boxes[i].configure(text="*", fg="red", bg="lightgrey")
