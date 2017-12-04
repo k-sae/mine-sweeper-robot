@@ -4,6 +4,7 @@ from tkinter import *
 from tkinter.messagebox import *
 
 from mine_sweeper.controller.game_board import GameBoard
+from mine_sweeper.model.node import Node
 
 
 class Board:
@@ -61,7 +62,7 @@ class Board:
 
         return lambda Button: self.lclick_handler(nodes[x][y], i)
 
-    def lclick_handler(self, value, i):
+    def lclick_handler(self, value : Node, i):
         # --test
         print(value)
         self.game_board.discover(value)
@@ -70,9 +71,9 @@ class Board:
             for c in r:
                 print(c.__str__() , end=" | ")
             print("\n")
-
-
-        if not self.game_board.discover(value):
+        #TODO belal
+        changed_nodes = self.game_board.discover(value)
+        if value.node_data.mine:
             self.boxes[i].configure(text="*", fg="red", bg="lightgrey")
             self.gameover()
         elif value.node_data.weight == 0:

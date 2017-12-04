@@ -29,20 +29,18 @@ class GameBoard:
             return {node}
         elif node_data.weight == 0:
             discovered.add(node)
-            all_adjecent=self.game_graph.m_graph[node]
-            #loop to un discoverd nodes
+            all_adjecent = self.game_graph.m_graph[node]
+            # loop to un discovered nodes
             for maybe_un_discovered in all_adjecent:
-                if(not maybe_un_discovered in discovered):
-                    discovered.update(self.discover(maybe_un_discovered,discovered))
+                if maybe_un_discovered not in discovered:
+                    discovered.update(self.discover(maybe_un_discovered, discovered))
             return discovered
             # TODO
             # keep discovering with connected nodes till a node with data found
             # i suggest bread first search (recursive)
         else:
-                return {node}
-        # in all cases update the discovered node
-
-
+            return {node}
+            # in all cases update the discovered node
 
     def generate_initial_state(self, row: int, col: int):
         self.row = row
@@ -103,12 +101,12 @@ class GameBoard:
             keys.append(key)
         while mines_num > 0:
             rand = randint(0, len(keys) - 1)
-            if (not self.game_graph.is_connected(node, keys[rand])) and (not keys[rand] is node) and (not self.__game_data[keys[rand]].mine):
+            if (not self.game_graph.is_connected(node, keys[rand])) and (not keys[rand] is node) and (
+                    not self.__game_data[keys[rand]].mine):
                 self.__game_data[keys[rand]].mine = True
                 mines_num -= 1
                 for n in self.game_graph.m_graph[keys[rand]]:
                     self.__game_data[n].weight += 1
-
 
     def get_graph_nodes_as_list(self):
         m_list = [[] for dump in range(0, self.row)]
