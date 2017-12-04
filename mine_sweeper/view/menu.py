@@ -1,6 +1,5 @@
 from tkinter import *
 
-from PIL import ImageTk, Image
 
 from mine_sweeper.controller.ai_controller import *
 from mine_sweeper.controller.ui_controller import *
@@ -46,8 +45,6 @@ class Menu:
 
         self.image = self.img_copy.resize((new_width, new_height))
 
-        self.background_image = ImageTk.PhotoImage(self.image)
-        self.background.configure(image=self.background_image)
 
     def invokeBoard(self, controller):
         try:

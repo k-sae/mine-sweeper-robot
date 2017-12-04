@@ -11,8 +11,9 @@ class GameBoard:
     def __init__(self):
         self.row = 8
         self.col = 8
-        self.game_graph = Graph()
+        self.game_graph = Graph(True)
         self.__game_data = {}
+        self.__nodes_list = None
 
     # TODO
     # this function is  responsible for discovering the game board
@@ -88,8 +89,9 @@ class GameBoard:
         for r in range(0, self.row):
             for c in range(0, self.col):
                 node = Node()
-                self.__game_data[node] = NodeData()
+                self.__game_data[node] = NodeData(pos=(r,c))
                 bord[r].append(node)
+
         return bord
 
     # receive first clicked node
@@ -109,13 +111,13 @@ class GameBoard:
                     self.__game_data[n].weight += 1
 
     def get_graph_nodes_as_list(self):
-        m_list = [[] for dump in range(0, self.row)]
-        row = 0
-        col = 0
-        for key in self.__game_data:
-            if col == self.col:
-                col = 0
-                row += 1
-            m_list[row].append(key)
-            col += 1
-        return m_list
+        if(self.__nodes_list is None):
+         self.__nodes_list = [[None for dummy in range(0,self.col)] for dump in range(0, self.row)]
+         for key  in self.__game_data:
+            self.__nodes_list[self.__game_data[key].pos[0]][self.__game_data[key].pos[1]]=key
+         return self.__nodes_list
+
+
+        else:
+            return self.__nodes_list
+
