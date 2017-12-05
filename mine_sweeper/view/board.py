@@ -14,7 +14,7 @@ class Board:
         self.size = size
         self.game_board = game_board
         # --test
-        game_board.set_mines(game_board.get_graph_nodes_as_list()[0][0])
+        self.first_click = True
         self.controller = controller(self.game_board)
         frame = Frame(master)
         # Make the window responsive
@@ -58,6 +58,10 @@ class Board:
     def lclickwrapper(self, x, y, i):
         # WARNING redundant line
         # too many useless loops
+        if self.first_click:
+            self.first_click = False
+            self.game_board.set_mines(self.game_board.get_graph_nodes_as_list()[x][y])
+
         nodes = self.game_board.get_graph_nodes_as_list()
 
         return lambda Button: self.lclick_handler(nodes[x][y], i)
