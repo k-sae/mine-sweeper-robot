@@ -2,8 +2,8 @@ import datetime
 import time
 from tkinter import *
 from tkinter.messagebox import *
-
 from mine_sweeper.controller.game_board import GameBoard
+from mine_sweeper.view.colors import colors
 from mine_sweeper.model.node import Node
 
 
@@ -50,7 +50,7 @@ class Board:
             for y in range(self.size[1]):
                 i = len(self.boxes)
                 Grid.rowconfigure(frame, y + 1, weight=1)
-                self.boxes.append(Button(frame, font=('TkDefaultFont', 20), text=" ", bg="darkgrey"))
+                self.boxes.append(Button(frame, font='TkDefaultFont 20 bold', text=" ", bg="darkgrey"))
                 # Lay the boxes on the board
                 self.boxes[i].grid(row=x + 1, column=y, sticky=N + S + E + W)
                 self.boxes[i].bind('<Button-1>', self.lclickwrapper(x, y, i))
@@ -85,7 +85,7 @@ class Board:
                 if weight == 0:
                     weight = ' '
                 index = pos[0] * self.size[0] + pos[1]
-                self.boxes[index].configure(text=weight, bg="lightgrey")
+                self.boxes[index].configure(text=weight, bg="lightgrey", fg=colors[weight])
 
     def update_timer(self):
         timer = time.time() - self.start_time
