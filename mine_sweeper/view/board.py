@@ -62,24 +62,30 @@ class Board:
 
         return lambda Button: self.lclick_handler(nodes[x][y], i)
 
-    def lclick_handler(self, value : Node, i):
-        # --test
+    def lclick_handler(self, value: Node, i):
         print(value)
         self.game_board.discover(value)
-        nodes =self.game_board.get_graph_nodes_as_list()
+        nodes = self.game_board.get_graph_nodes_as_list()
+
         for r in nodes:
             for c in r:
                 print(c.__str__() , end=" | ")
             print("\n")
+
         #TODO belal
         changed_nodes = self.game_board.discover(value)
+
         if value.node_data.mine:
             self.boxes[i].configure(text="*", fg="red", bg="lightgrey")
             self.gameover()
-        elif value.node_data.weight == 0:
-            self.boxes[i].configure(text=" ", bg="lightgrey")
-        elif value.node_data.weight > 0:
-            self.boxes[i].configure(text=str(value.node_data.weight), bg="lightgrey")
+        elif value.node_data.weight >= 0:
+            for changed_node in changed_nodes:
+                pos = changed_node.node_data.pos
+                weight = changed_node.node_data.weight
+                if weight == 0:
+                    weight = ' '
+                index = pos[0] * self.size[0] + pos[1]
+                self.boxes[index].configure(text=weight, bg="lightgrey")
 
     def update_timer(self):
         timer = time.time() - self.start_time
