@@ -53,34 +53,39 @@ class Board:
                 self.boxes.append(Button(frame, font='TkDefaultFont 20 bold', text=" ", bg="darkgrey"))
                 # Lay the boxes on the board
                 self.boxes[i].grid(row=x + 1, column=y, sticky=N + S + E + W)
-                self.boxes[i].bind('<Button-1>', self.lclickwrapper(x, y, i))
+                self.boxes[i].bind('<Button-1>', self.lclick_wrapper(x, y))
 
-    def lclickwrapper(self, x, y, i):
-        # WARNING redundant line
-        # too many useless loops
+        # Bot function
+        # self.left_click([(0, 0), (7, 7)])
+
+    def lclick_wrapper(self, x, y):
+
+        return lambda Button: self.lclick_handler(x, y)
+
+    def lclick_handler(self, x, y):
+
         if self.first_click:
             self.first_click = False
             self.game_board.set_mines(self.game_board.get_graph_nodes_as_list()[x][y])
 
-        nodes = self.game_board.get_graph_nodes_as_list()
+        value = self.game_board.get_graph_nodes_as_list()[x][y]
 
-        return lambda Button: self.lclick_handler(nodes[x][y], i)
-
-    def lclick_handler(self, value: Node, i):
         print(value)
         self.game_board.discover(value)
         nodes = self.game_board.get_graph_nodes_as_list()
 
         for r in nodes:
             for c in r:
-                print(c.__str__() , end=" | ")
+                print(c.__str__(), end=" | ")
             print("\n")
 
-        #TODO belal
+        # TODO belal
         changed_nodes = self.game_board.discover(value)
 
         if value.node_data.mine:
-            self.boxes[i].configure(text="*", fg="red", bg="lightgrey")
+            pos = value.node_data.pos
+            index = pos[0] * self.size[0] + pos[1]
+            self.boxes[index].configure(text="*", fg="red", bg="lightgrey")
             self.gameover()
         elif value.node_data.weight >= 0:
             for changed_node in changed_nodes:
@@ -115,3 +120,9 @@ class Board:
             self.__init__(self.master, self.size, self.game_board, self.controller.__class__)
         else:
             self.master.destroy()
+
+    # Bot function
+    def left_click(self, pos):
+
+        for p in pos:
+            self.lclick_handler(p[0], p[1])
