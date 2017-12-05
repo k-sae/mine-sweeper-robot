@@ -90,6 +90,7 @@ class Board:
                     weight = ' '
                 index = pos[0] * self.size[0] + pos[1]
                 self.boxes[index].configure(text=weight, bg="lightgrey", fg=colors[weight])
+                self.boxes[index].unbind('<Button-1>')
 
     def update_timer(self):
         timer = time.time() - self.start_time
