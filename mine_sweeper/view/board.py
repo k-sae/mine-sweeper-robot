@@ -15,7 +15,7 @@ class Board:
         self.game_board = game_board
         self.first_click = True
         self.controller = controller(self.game_board)
-        frame = Frame(master)
+        frame = Frame(self.master)
         # Make the window responsive
         frame.grid(row=0, column=0, sticky=N + S + E + W)
 

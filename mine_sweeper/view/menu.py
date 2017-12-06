@@ -12,41 +12,27 @@ class Menu:
         self.master.title("Minesweeper")
         self.frame = Frame(self.master)
 
-        # self.image = Image.open('resources/13950123000568_PhotoI.jpg')
-        # self.img_copy = self.image.copy()
-        #
-        # self.background_image = ImageTk.PhotoImage(self.image)
+        self.widthLbl = Label(self.frame, text='Width: ')
+        self.widthLbl.grid(row=0, column=0)
+        self.widthEntry = Entry(self.frame)
+        self.widthEntry.grid(row=0, column=1)
 
-        self.background = Label(self.frame)
-        self.background.pack(fill=BOTH, expand=YES)
-        # self.background.bind('<Configure>', self._resize_image)
+        self.heightLbl = Label(self.frame, text='Height: ')
+        self.heightLbl.grid(row=1, column=0)
+        self.heightEntry = Entry(self.frame)
+        self.heightEntry.grid(row=1, column=1)
 
-        self.widthLbl = Label(self.background, text='Width: ')
-        self.widthLbl.pack()
-        self.widthEntry = Entry(self.background)
-        self.widthEntry.pack()
+        self.AIBtn = Button(self.frame, text='AI Controller', command=lambda: self.invoke_board(AiController))
+        self.AIBtn.grid(row=2, column=0)
+        self.MouseBtn = Button(self.frame, text='Mouse Controller', command=lambda: self.invoke_board(UiController))
+        self.MouseBtn.grid(row=2, column=1)
 
-        self.heightLbl = Label(self.background, text='Height: ')
-        self.heightLbl.pack()
-        self.heightEntry = Entry(self.background)
-        self.heightEntry.pack()
+        self.frame.rowconfigure(0, weight=1)
+        self.frame.columnconfigure(0, weight=1)
 
-        self.AIBtn = Button(self.background, text='AI Controller', command=lambda: self.invokeBoard(AiController))
-        self.AIBtn.pack()
-        self.MouseBtn = Button(self.background, text='Mouse Controller', command=lambda: self.invokeBoard(UiController))
-        self.MouseBtn.pack()
+        self.frame.pack(pady=250)
 
-        self.frame.pack(fill=BOTH, expand=YES)
-
-    def _resize_image(self, event):
-
-        new_width = event.width
-        new_height = event.height
-
-        self.image = self.img_copy.resize((new_width, new_height))
-
-
-    def invokeBoard(self, controller):
+    def invoke_board(self, controller):
         try:
             width = int(self.widthEntry.get())
             height = int(self.heightEntry.get())
