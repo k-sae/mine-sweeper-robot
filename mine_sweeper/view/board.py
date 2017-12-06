@@ -8,7 +8,7 @@ from mine_sweeper.model.node import Node
 
 
 class Board:
-    def __init__(self, master, size, game_board: GameBoard, controller):
+    def __init__(self, master: Tk, size: (int, int), game_board: GameBoard, controller):
         # Initialize the UI
         self.master = master
         self.size = size
@@ -62,15 +62,15 @@ class Board:
         # Bot function
         # self.left_click([(0, 0), (7, 7)])
 
-    def lclick_wrapper(self, x, y):
+    def lclick_wrapper(self, x: int, y: int):
 
-        return lambda Button: self.lclick_handler(x, y)
+        return lambda Button: self.open_box(x, y)
 
-    def rclick_wrapper(self, x, y):
+    def rclick_wrapper(self, x: int, y: int):
 
-        return lambda Button: self.rclick_handler(x, y)
+        return lambda Button: self.add_flag(x, y)
 
-    def lclick_handler(self, x, y):
+    def open_box(self, x: int, y: int):
 
         if self.first_click:
             self.first_click = False
@@ -105,8 +105,9 @@ class Board:
                 self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
                 self.boxes[index]['button'].unbind('<Button-1>')
 
-    # Right click mouse handler
-    def rclick_handler(self, x, y):
+            # TODO check for victory
+
+    def add_flag(self, x: int, y: int):
         index = x * self.size[0] + y
         # If this box not lift clicked, mark it as a flag
         if not self.boxes[index]['isFlagged']:
@@ -123,7 +124,6 @@ class Board:
 
         # Update the flags count
         self.minesLBL.configure(text="Mines left: " + str(self.flags) + "/" + str(self.mines))
-
 
     def update_timer(self):
         timer = time.time() - self.start_time
@@ -150,7 +150,7 @@ class Board:
             self.master.destroy()
 
     # Bot function
-    def left_click(self, pos):
+    def left_click(self, pos: [(int, int)]):
 
         for p in pos:
-            self.lclick_handler(p[0], p[1])
+            self.open_box(p[0], p[1])
