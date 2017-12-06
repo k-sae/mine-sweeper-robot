@@ -27,7 +27,7 @@ class Board:
         # Initialize the core variables
         self.flags = 0  # The number of flags
         self.boxes = []  # A list that contain all of the boxes
-        self.mines = int((self.size[0] * self.size[1]) * 0.16)  # The number of mines, Identified by the game size
+        self.mines = round((self.size[0] * self.size[1]) * (10/64))  # The number of mines, Identified by the game size
 
         # Initialize the timer label
         self.timerLBL = Label(frame, font=("Helvetica", 16))
@@ -50,10 +50,14 @@ class Board:
             for y in range(self.size[1]):
                 i = len(self.boxes)
                 Grid.rowconfigure(frame, y + 1, weight=1)
-                self.boxes.append(Button(frame, font='TkDefaultFont 20 bold', text=" ", bg="darkgrey"))
+                self.boxes.append({
+                    "button": Button(frame, font='TkDefaultFont 20 bold', text=" ", bg="darkgrey"),
+                    "isFlagged": False
+                })
                 # Lay the boxes on the board
-                self.boxes[i].grid(row=x + 1, column=y, sticky=N + S + E + W)
-                self.boxes[i].bind('<Button-1>', self.lclick_wrapper(x, y))
+                self.boxes[i]['button'].grid(row=x + 1, column=y, sticky=N + S + E + W)
+                self.boxes[i]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
+                self.boxes[i]['button'].bind('<Button-3>', self.rclick_wrapper(x, y))
 
         # Bot function
         # self.left_click([(0, 0), (7, 7)])
@@ -61,6 +65,10 @@ class Board:
     def lclick_wrapper(self, x, y):
 
         return lambda Button: self.lclick_handler(x, y)
+
+    def rclick_wrapper(self, x, y):
+
+        return lambda Button: self.rclick_handler(x, y)
 
     def lclick_handler(self, x, y):
 
@@ -85,7 +93,7 @@ class Board:
         if value.node_data.mine:
             pos = value.node_data.pos
             index = pos[0] * self.size[0] + pos[1]
-            self.boxes[index].configure(text="*", fg="red", bg="lightgrey")
+            self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
             self.gameover()
         elif value.node_data.weight >= 0:
             for changed_node in changed_nodes:
@@ -94,8 +102,28 @@ class Board:
                 if weight == 0:
                     weight = ' '
                 index = pos[0] * self.size[0] + pos[1]
-                self.boxes[index].configure(text=weight, bg="lightgrey", fg=colors[weight])
-                self.boxes[index].unbind('<Button-1>')
+                self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
+                self.boxes[index]['button'].unbind('<Button-1>')
+
+    # Right click mouse handler
+    def rclick_handler(self, x, y):
+        index = x * self.size[0] + y
+        # If this box not lift clicked, mark it as a flag
+        if not self.boxes[index]['isFlagged']:
+            self.boxes[index]['button'].configure(text="F")
+            self.boxes[index]['isFlagged'] = True
+            self.boxes[index]['button'].unbind('<Button-1>')
+            self.flags += 1
+        # If this box id flagged, unflag
+        elif self.boxes[index]['isFlagged']:
+            self.boxes[index]['button'].configure(text=" ")
+            self.boxes[index]['isFlagged'] = False
+            self.boxes[index]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
+            self.flags -= 1
+
+        # Update the flags count
+        self.minesLBL.configure(text="Mines left: " + str(self.flags) + "/" + str(self.mines))
+
 
     def update_timer(self):
         timer = time.time() - self.start_time
