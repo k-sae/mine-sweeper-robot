@@ -13,7 +13,6 @@ class Board:
         self.master = master
         self.size = size
         self.game_board = game_board
-        # --test
         self.first_click = True
         self.controller = controller(self.game_board)
         frame = Frame(master)
@@ -27,6 +26,8 @@ class Board:
         # Initialize the core variables
         self.flags = 0  # The number of flags
         self.boxes = []  # A list that contain all of the boxes
+        self.clickedNodes = []  # Contains the clicked nodes (helps checking for victory)
+        self.clicks = 0   # Number of clicks to check for victory
         self.mines = round((self.size[0] * self.size[1]) * (10/64))  # The number of mines, Identified by the game size
 
         # Initialize the timer label
@@ -104,8 +105,13 @@ class Board:
                 index = pos[0] * self.size[0] + pos[1]
                 self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
                 self.boxes[index]['button'].unbind('<Button-1>')
+                if changed_node not in self.clickedNodes:
+                    self.clickedNodes.append(changed_node)
+                    self.clicks += 1
 
-            # TODO check for victory
+            # Check for victory
+            if self.clicks == (self.size[0] * self.size[1] - self.mines):
+                self.victory()
 
     def add_flag(self, x: int, y: int):
         index = x * self.size[0] + y
