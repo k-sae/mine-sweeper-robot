@@ -33,6 +33,7 @@ class Board:
         # Initialize the timer
         self.start_time = time
         self.timer = "00:00"
+        self.update_timer_id = 0
 
         # Initialize the timer label
         self.timerLBL = Label(frame, text="Time: " + self.timer, font=("Helvetica", 16))
@@ -137,10 +138,11 @@ class Board:
         timer = time.time() - self.start_time
         self.timer = datetime.datetime.fromtimestamp(timer).strftime('%M:%S')
         self.timerLBL.configure(text="Time: " + self.timer)
-        self.master.after(1000, self.update_timer)
+        self.update_timer_id = self.master.after(1000, self.update_timer)
 
     # Show the player that he lose!
     def gameover(self):
+        self.master.after_cancel(self.update_timer_id)
         showinfo("Game Over", "You Lose!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
@@ -150,6 +152,7 @@ class Board:
 
     # Show the player that he won!
     def victory(self):
+        self.master.after_cancel(self.update_timer_id)
         showinfo("Victory!", "You Win!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
