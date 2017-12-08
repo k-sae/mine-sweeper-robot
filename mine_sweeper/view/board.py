@@ -154,6 +154,24 @@ class Board:
     def victory(self):
         self.master.after_cancel(self.update_timer_id)
         showinfo("Victory!", "You Win!")
+
+        try:
+            score = open("score.txt", "r")
+        except:
+            open("score.txt", "w").close()
+            score = open("score.txt", "r")
+
+        scores = score.readlines()
+        scores.append(self.timer + '\n')
+        scores.sort()
+
+        score.close()
+        score = open("score.txt", "w")
+        score.writelines(scores)
+        score.close()
+        s = ''.join(scores)
+        showinfo("Score", "Your time was: " + self.timer + '\nScores Board:\n' + s)
+
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
             self.__init__(self.master, self.size, self.game_board, self.controller.__class__)
