@@ -30,13 +30,13 @@ class Board:
         self.clicks = 0   # Number of clicks to check for victory
         self.mines = round((self.size[0] * self.size[1]) * (10/64))  # The number of mines, Identified by the game size
 
-        # Initialize the timer label
-        self.timerLBL = Label(frame, font=("Helvetica", 16))
-        self.timerLBL.grid(column=0, row=0, sticky=N + S + E + W, columnspan=int(self.size[1] / 2))
+        # Initialize the timer
+        self.start_time = time
+        self.timer = "00:00"
 
-        # Initialize the timer and update it every second
-        self.start_time = time.time()
-        self.update_timer()
+        # Initialize the timer label
+        self.timerLBL = Label(frame, text="Time: " + self.timer, font=("Helvetica", 16))
+        self.timerLBL.grid(column=0, row=0, sticky=N + S + E + W, columnspan=int(self.size[1] / 2))
 
         # Initialize the flag-mines label
         self.minesLBL = Label(frame, font=("Helvetica", 16),
@@ -76,6 +76,8 @@ class Board:
         if self.first_click:
             self.first_click = False
             self.game_board.set_mines(self.game_board.get_graph_nodes_as_list()[x][y])
+            self.start_time = time.time()
+            self.update_timer()
 
         value = self.game_board.get_graph_nodes_as_list()[x][y]
 
@@ -133,8 +135,8 @@ class Board:
 
     def update_timer(self):
         timer = time.time() - self.start_time
-        timerstr = datetime.datetime.fromtimestamp(timer).strftime('%M:%S')
-        self.timerLBL.configure(text="Time: " + timerstr)
+        self.timer = datetime.datetime.fromtimestamp(timer).strftime('%M:%S')
+        self.timerLBL.configure(text="Time: " + self.timer)
         self.master.after(1000, self.update_timer)
 
     # Show the player that he lose!
