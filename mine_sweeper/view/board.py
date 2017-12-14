@@ -86,13 +86,13 @@ class Board:
         changed_nodes = self.game_board.discover(value)
 
         if value.node_data.mine:
-            pos = value.node_data.pos
+            pos = value.pos
             index = pos[0] * self.size[0] + pos[1]
             self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
             self.gameover()
         elif value.node_data.weight >= 0:
             for changed_node in changed_nodes:
-                pos = changed_node.node_data.pos
+                pos = changed_node.pos
                 weight = changed_node.node_data.weight
                 if weight == 0:
                     weight = ' '
