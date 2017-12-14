@@ -114,8 +114,8 @@ class GameBoard:
         if self.__nodes_list is None:
 
             self.__nodes_list = [[None for dummy in range(0, self.col)] for dump in range(0, self.row)]
-            # for key in self.__game_data:
-            #     self.__nodes_list[self.__game_data[key].pos[0]][self.__game_data[key].pos[1]] = key
+            for key in self.__game_data:
+                 self.__nodes_list[key.pos[0]][key.pos[1]] = key
             return self.__nodes_list
 
         else:
