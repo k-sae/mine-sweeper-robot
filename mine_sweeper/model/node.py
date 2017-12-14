@@ -8,6 +8,6 @@ class Node:
 
     def __str__(self):
         if self.node_data is None:
-            return "none"
+            return "none" + "pos: " + str(self.pos)
         else:
-            return str(self.node_data)
+            return str(self.node_data) + "pos: " + str(self.pos)
