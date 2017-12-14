@@ -14,7 +14,6 @@ class Board:
         self.size = size
         self.game_board = game_board
         self.first_click = True
-        self.controller = controller(self.game_board)
         frame = Frame(self.master)
         # Make the window responsive
         frame.grid(row=0, column=0, sticky=N + S + E + W)
@@ -45,7 +44,6 @@ class Board:
         self.minesLBL.grid(column=int(self.size[1] / 2), row=0, sticky=N + S + E + W, columnspan=int(self.size[1] / 2))
 
         # get graph nodes
-        print(game_board.get_graph_nodes_as_list())
         # Create boxes upon the game size
         for x in range(self.size[0]):
             Grid.columnconfigure(frame, x, weight=1)
@@ -61,6 +59,7 @@ class Board:
                 self.boxes[i]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
                 self.boxes[i]['button'].bind('<Button-3>', self.rclick_wrapper(x, y))
 
+        self.controller = controller(self)
         # Bot function
         # self.left_click([(0, 0), (7, 7)])
 
@@ -82,15 +81,7 @@ class Board:
 
         value = self.game_board.get_graph_nodes_as_list()[x][y]
 
-        print(value)
         self.game_board.discover(value)
-        nodes = self.game_board.get_graph_nodes_as_list()
-
-        for r in nodes:
-            for c in r:
-                print(c.__str__(), end=" | ")
-            print("\n")
-
         # TODO belal
         changed_nodes = self.game_board.discover(value)
 
@@ -115,6 +106,7 @@ class Board:
             # Check for victory
             if self.clicks == (self.size[0] * self.size[1] - self.mines):
                 self.victory()
+        return changed_nodes
 
     def add_flag(self, x: int, y: int):
         index = x * self.size[0] + y
@@ -179,7 +171,5 @@ class Board:
             self.master.destroy()
 
     # Bot function
-    def left_click(self, pos: [(int, int)]):
-
-        for p in pos:
-            self.open_box(p[0], p[1])
+    def left_click(self, pos: (int, int)):
+        return self.open_box(pos[0], pos[1])
