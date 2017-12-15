@@ -11,8 +11,6 @@ class AiController:
         self.board = board
         # list holds the weighted nodes in order to traverse them later
         self.nodes_to_traverse = []
-        self.nodes_to_discover = {}
-        self.nodes_weights = {}
         self.mine_vault = []
         self.high_priority_nodes = []
         self.discover_node((int(board.size[0] / 2), int(board.size[1] / 2)))
@@ -20,19 +18,17 @@ class AiController:
         t.start()
 
     def start_ui_solver(self):
-        for x in range(10):
+        for x in range(100):
             self.start_discovering()
+            # time.sleep(0.5)
 
     def discover_node(self, pos):
         nodes = self.board.left_click(pos)
         for node in nodes:
             if node.node_data.weight > 0:
                 self.nodes_to_traverse.append(node)
-                self.nodes_weights[node] = node.node_data.weight
 
     def start_discovering(self):
-        self.nodes_to_discover.clear()
-        time.sleep(2)
         for node in self.nodes_to_traverse:
             un_discovered = []
             for neighbour in self.board.game_board.game_graph.m_graph[node]:
@@ -43,11 +39,7 @@ class AiController:
 
     def trigger_the_high_priority_nodes(self):
         if len(self.high_priority_nodes) == 0:
-            print("choosing a random node")
-            for nodes in self.board.game_board.get_graph_nodes_as_list():
-                for node in nodes:
-                    if node not in self.nodes_weights.keys():
-                        self.discover_node(node.pos)
+            self.discover_rand_node()
         else:
             for node in self.high_priority_nodes:
                 if node not in self.mine_vault:
@@ -59,7 +51,7 @@ class AiController:
             self.add_to_the_vault(nodes)
             for node in nodes:
                 for neighbour in self.board.game_board.game_graph.m_graph[node]:
-                    self.board.highlight_sec(neighbour.pos)
+                    # self.board.highlight_sec(neighbour.pos)
                     if neighbour.node_data is not None:
                         self.back_track_nodes(neighbour)
 
@@ -71,10 +63,10 @@ class AiController:
                     self.high_priority_nodes.append(neighbour)
 
     def get_un_risky_weight(self, node: Node):
-        count = 0
+        count = node.node_data.weight
         for neighbour in self.board.game_board.game_graph.m_graph[node]:
-            if neighbour not in self.mine_vault and neighbour.node_data is None:
-                count += 1
+            if neighbour.node_data is None and neighbour in self.mine_vault:
+                count -= 1
         return count
 
     def add_to_the_vault(self, nodes):
@@ -82,3 +74,11 @@ class AiController:
             if node not in self.mine_vault:
                 self.mine_vault.append(node)
                 self.board.add_flag(node.pos[0], node.pos[1])
+    #TODO
+    def discover_rand_node(self):
+        print("choosing a random node")
+        for nodes in self.board.game_board.get_graph_nodes_as_list():
+            for node in nodes:
+                if node.node_data is None and node not in self.mine_vault:
+                    self.discover_node(node.pos)
+                    return
