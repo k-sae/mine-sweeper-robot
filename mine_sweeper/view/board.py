@@ -14,6 +14,9 @@ class Board:
         self.size = size
         self.game_board = game_board
         self.first_click = True
+        # zero indicates unsolved
+        # 1 win and -1 lose
+        self.game_state = 0
         frame = Frame(self.master)
         # Make the window responsive
         frame.grid(row=0, column=0, sticky=N + S + E + W)
@@ -135,6 +138,7 @@ class Board:
     # Show the player that he lose!
     def gameover(self):
         self.master.after_cancel(self.update_timer_id)
+        self.game_state = -1
         showinfo("Game Over", "You Lose!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
@@ -144,6 +148,7 @@ class Board:
 
     # Show the player that he won!
     def victory(self):
+        self.game_state = 1
         self.master.after_cancel(self.update_timer_id)
         showinfo("Victory!", "You Win!")
 

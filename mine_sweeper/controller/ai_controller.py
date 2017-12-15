@@ -18,7 +18,7 @@ class AiController:
         t.start()
 
     def start_ui_solver(self):
-        for x in range(100):
+        while self.board.game_state == 0:
             self.start_discovering()
             # time.sleep(0.5)
 
@@ -74,7 +74,8 @@ class AiController:
             if node not in self.mine_vault:
                 self.mine_vault.append(node)
                 self.board.add_flag(node.pos[0], node.pos[1])
-    #TODO
+
+    # TODO
     def discover_rand_node(self):
         print("choosing a random node")
         for nodes in self.board.game_board.get_graph_nodes_as_list():
