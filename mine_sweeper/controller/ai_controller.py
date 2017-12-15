@@ -58,6 +58,8 @@ class AiController:
     def back_track_nodes(self, node):
         if self.get_un_risky_weight(node) == 0:
             self.board.highlight(node.pos)
+            if node in self.nodes_to_traverse:
+                self.nodes_to_traverse.remove(node)
             for neighbour in self.board.game_board.game_graph.m_graph[node]:
                 if neighbour.node_data is None and neighbour not in self.mine_vault:
                     self.high_priority_nodes.append(neighbour)
