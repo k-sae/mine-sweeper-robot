@@ -25,7 +25,7 @@ class AiController:
     def discover_node(self, pos):
         nodes = self.board.left_click(pos)
         for node in nodes:
-            if node.node_data.weight > 0:
+            if node.node_data.weight > 0 and node not in self.nodes_to_traverse:
                 self.nodes_to_traverse.append(node)
 
     def start_discovering(self):
