@@ -173,3 +173,11 @@ class Board:
     # Bot function
     def left_click(self, pos: (int, int)):
         return self.open_box(pos[0], pos[1])
+
+    def highlight(self, pos):
+        index = pos[0] * self.size[0] + pos[1]
+        self.boxes[index]['button'].configure(bg="yellow")
+
+    def highlight_sec(self, pos):
+        index = pos[0] * self.size[0] + pos[1]
+        self.boxes[index]['button'].configure(bg="green")
