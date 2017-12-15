@@ -49,6 +49,8 @@ class AiController:
     def start_weighting(self, nodes: [], parent: Node):
         if len(nodes) == parent.node_data.weight:
             self.add_to_the_vault(nodes)
+            self.nodes_to_traverse.remove(parent)
+            self.board.highlight_sec(parent.pos)
             for node in nodes:
                 for neighbour in self.board.game_board.game_graph.m_graph[node]:
                     # self.board.highlight_sec(neighbour.pos)
@@ -60,6 +62,7 @@ class AiController:
             self.board.highlight(node.pos)
             if node in self.nodes_to_traverse:
                 self.nodes_to_traverse.remove(node)
+                self.board.highlight_sec(node.pos)
             for neighbour in self.board.game_board.game_graph.m_graph[node]:
                 if neighbour.node_data is None and neighbour not in self.mine_vault:
                     self.high_priority_nodes.append(neighbour)
