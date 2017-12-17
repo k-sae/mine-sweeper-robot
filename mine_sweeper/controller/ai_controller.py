@@ -13,19 +13,21 @@ class AiController:
         self.nodes_to_traverse = []
         self.mine_vault = []
         self.high_priority_nodes = []
+        self.exiled_nodes = []
         self.discover_node((int(board.size[0] / 2), int(board.size[1] / 2)))
         t = Thread(target=self.start_ui_solver, args=())
         t.start()
 
     def start_ui_solver(self):
         while self.board.game_state == 0:
+            print(len(self.nodes_to_traverse))
             self.start_discovering()
             # time.sleep(0.5)
 
     def discover_node(self, pos):
         nodes = self.board.left_click(pos)
         for node in nodes:
-            if node.node_data.weight > 0 and node not in self.nodes_to_traverse:
+            if node.node_data.weight > 0 and node not in self.nodes_to_traverse and node not in self.exiled_nodes:
                 self.nodes_to_traverse.append(node)
 
     def start_discovering(self):
@@ -62,6 +64,7 @@ class AiController:
             self.board.highlight(node.pos)
             if node in self.nodes_to_traverse:
                 self.nodes_to_traverse.remove(node)
+                self.exiled_nodes.append(node)
                 self.board.highlight_sec(node.pos)
             for neighbour in self.board.game_board.game_graph.m_graph[node]:
                 if neighbour.node_data is None and neighbour not in self.mine_vault:
