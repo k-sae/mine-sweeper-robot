@@ -23,6 +23,9 @@ class GameBoard:
     def discover(self, node: Node, discovered=set()) -> set():
         node_data = self.__game_data[node]
         node_data.__class__ = NodeData
+        if node.node_data is not None:
+            return {}
+
         node.node_data = node_data
 
         if node_data.mine:
@@ -33,7 +36,7 @@ class GameBoard:
             all_adjecent = self.game_graph.m_graph[node]
             # loop to un discovered nodes
             for maybe_un_discovered in all_adjecent:
-                if maybe_un_discovered not in discovered:
+                if maybe_un_discovered not in discovered and maybe_un_discovered.node_data is None:
                     discovered.update(self.discover(maybe_un_discovered, discovered))
             return discovered
             # TODO
@@ -115,7 +118,7 @@ class GameBoard:
 
             self.__nodes_list = [[None for dummy in range(0, self.col)] for dump in range(0, self.row)]
             for key in self.__game_data:
-                 self.__nodes_list[key.pos[0]][key.pos[1]] = key
+                self.__nodes_list[key.pos[0]][key.pos[1]] = key
             return self.__nodes_list
 
         else:

@@ -84,7 +84,7 @@ class Board:
 
         value = self.game_board.get_graph_nodes_as_list()[x][y]
 
-        self.game_board.discover(value)
+        # self.game_board.discover(value)
         # TODO belal
         changed_nodes = self.game_board.discover(value)
 
