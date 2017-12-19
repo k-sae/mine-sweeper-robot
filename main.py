@@ -27,7 +27,7 @@ if __name__ == "__main__":
     height=int(input("enter height:\n"))
     game_board = GameBoard.get_instance()
     game_board.generate_initial_state(height, width)
-    controller = AiController(game_board ,GameBoard.get_instance().discover)
+    #controller = AiController(game_board ,GameBoard.get_instance().discover)
     #controller.start_ai_solver()
     #controller.wait_till_ai_finish()
     root = Tk()
