@@ -153,7 +153,8 @@ class Board:
         if answer == "yes":
             self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
-            self.master.destroy()
+            # self.master.destroy()
+            sys.exit(0)
 
     # Show the player that he won!
     def victory(self):
@@ -182,7 +183,8 @@ class Board:
         if answer == "yes":
             self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
-            self.master.destroy()
+            # self.master.destroy()
+            sys.exit(0)
 
     def highlight(self, pos):
         index = pos[0] * self.size[0] + pos[1]
