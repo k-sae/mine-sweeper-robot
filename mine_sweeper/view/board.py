@@ -66,22 +66,22 @@ class Board:
                 self.boxes[i]['button'].bind('<Button-3>', self.rclick_wrapper(x, y))
         if is_ai:
             self.controller = AiController(game_board,
-                                           self.left_click,
+                                           self.open_box,
                                            self.highlight,
                                            self.highlight_sec,
                                            self.add_flag)
-            # Bot function
-            # self.left_click([(0, 0), (7, 7)])
 
     def lclick_wrapper(self, x: int, y: int):
 
-        return lambda Button: self.open_box(x, y)
+        return lambda Button: self.open_box((x, y))
 
     def rclick_wrapper(self, x: int, y: int):
 
         return lambda Button: self.add_flag((x, y))
 
-    def open_box(self, x: int, y: int):
+    def open_box(self, pos):
+        x = pos[0]
+        y = pos[1]
 
         if self.first_click:
             self.first_click = False
@@ -184,10 +184,6 @@ class Board:
             self.__init__(self.master, self.size, self.game_board, self.controller.__class__)
         else:
             self.master.destroy()
-
-    # Bot function
-    def left_click(self, pos: (int, int)):
-        return self.open_box(pos[0], pos[1])
 
     def highlight(self, pos):
         index = pos[0] * self.size[0] + pos[1]
