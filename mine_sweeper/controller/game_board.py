@@ -15,6 +15,11 @@ class GameBoard:
         self.__game_data = {}
         self.__nodes_list = None
 
+        # zero indicates unsolved
+        # 1 win and -1 lose
+        self.game_state = 0
+        self.game_state = 0
+
     # TODO
     # this function is  responsible for discovering the game board
     # all data for board is preserved game_data
@@ -30,6 +35,7 @@ class GameBoard:
 
         if node_data.mine:
             # mine is hit
+            self.game_state = -1
             return {node}
         elif node_data.weight == 0:
             discovered.add(node)

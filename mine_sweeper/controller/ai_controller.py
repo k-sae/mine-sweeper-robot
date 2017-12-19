@@ -2,28 +2,33 @@ from threading import *
 
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.model.node import Node
-from mine_sweeper.view.board import Board
-import time
 
 
 class AiController:
-    def __init__(self, board: Board):
-        self.board = board
+    def __init__(self, game_board: GameBoard, discover_call_back,
+                 discovered_nodes_highlight_call_back = None
+                 , ignored_nodes_highlight_call_back = None
+                 , add_flag_call_call_back = None):
+        self.game_board = game_board
+        self.discover_call_back = discover_call_back
+        self.discovered_nodes_highlight_call_back = discovered_nodes_highlight_call_back
+        self.ignored_nodes_highlight_call_back = ignored_nodes_highlight_call_back
+        self.add_flag_call_call_back = add_flag_call_call_back
         # list holds the weighted nodes in order to traverse them later
         self.nodes_to_traverse = []
         self.mine_vault = []
         self.high_priority_nodes = []
-        self.discover_node((int(board.size[0] / 2), int(board.size[1] / 2)))
+        self.discover_node((int(game_board.row / 2), int(game_board.col / 2)))
         t = Thread(target=self.start_ui_solver, args=())
         t.start()
 
     def start_ui_solver(self):
-        while self.board.game_state == 0:
+        while self.game_board.game_state == 0:
             self.start_discovering()
             # time.sleep(0.5)
 
     def discover_node(self, pos):
-        nodes = self.board.left_click(pos)
+        nodes = self.discover_call_back(pos)
         for node in nodes:
             if node.node_data.weight > 0 and node not in self.nodes_to_traverse:
                 self.nodes_to_traverse.append(node)
@@ -31,7 +36,7 @@ class AiController:
     def start_discovering(self):
         for node in self.nodes_to_traverse:
             un_discovered = []
-            for neighbour in self.board.game_board.game_graph.m_graph[node]:
+            for neighbour in self.game_board.game_graph.m_graph[node]:
                 if neighbour.node_data is None:
                     un_discovered.append(neighbour)
             self.start_weighting(un_discovered, node)
@@ -50,26 +55,34 @@ class AiController:
         if len(nodes) == parent.node_data.weight:
             self.add_to_the_vault(nodes)
             self.nodes_to_traverse.remove(parent)
-            self.board.highlight_sec(parent.pos)
+            if self.ignored_nodes_highlight_call_back is not None:
+                self.ignored_nodes_highlight_call_back(parent.pos)
+
             for node in nodes:
-                for neighbour in self.board.game_board.game_graph.m_graph[node]:
+                for neighbour in self.game_board.game_graph.m_graph[node]:
                     # self.board.highlight_sec(neighbour.pos)
                     if neighbour.node_data is not None:
                         self.back_track_nodes(neighbour)
 
     def back_track_nodes(self, node):
         if self.get_un_risky_weight(node) == 0:
-            self.board.highlight(node.pos)
+            # highlight as traversed
+            if self.discovered_nodes_highlight_call_back is not None:
+                self.discovered_nodes_highlight_call_back(node.pos)
+
             if node in self.nodes_to_traverse:
                 self.nodes_to_traverse.remove(node)
-                self.board.highlight_sec(node.pos)
-            for neighbour in self.board.game_board.game_graph.m_graph[node]:
+                # highlight unneeded
+                if self.ignored_nodes_highlight_call_back is not None:
+                    self.ignored_nodes_highlight_call_back(node.pos)
+
+            for neighbour in self.game_board.game_graph.m_graph[node]:
                 if neighbour.node_data is None and neighbour not in self.mine_vault:
                     self.high_priority_nodes.append(neighbour)
 
     def get_un_risky_weight(self, node: Node):
         count = node.node_data.weight
-        for neighbour in self.board.game_board.game_graph.m_graph[node]:
+        for neighbour in self.game_board.game_graph.m_graph[node]:
             if neighbour.node_data is None and neighbour in self.mine_vault:
                 count -= 1
         return count
@@ -78,12 +91,13 @@ class AiController:
         for node in nodes:
             if node not in self.mine_vault:
                 self.mine_vault.append(node)
-                self.board.add_flag(node.pos[0], node.pos[1])
+                if self.add_flag_call_call_back is not None:
+                    self.add_flag_call_call_back(node.pos)
 
     # TODO
     def discover_rand_node(self):
         print("choosing a random node")
-        for nodes in self.board.game_board.get_graph_nodes_as_list():
+        for nodes in self.game_board.get_graph_nodes_as_list():
             for node in nodes:
                 if node.node_data is None and node not in self.mine_vault:
                     self.discover_node(node.pos)

@@ -2,13 +2,15 @@ import datetime
 import time
 from tkinter import *
 from tkinter.messagebox import *
+
+from mine_sweeper.controller.ai_controller import AiController
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.view.colors import colors
 from mine_sweeper.model.node import Node
 
 
 class Board:
-    def __init__(self, master: Tk, size: (int, int), game_board: GameBoard, controller):
+    def __init__(self, master: Tk, size: (int, int), game_board: GameBoard, is_ai=False):
         # Initialize the UI
         self.master = master
         self.size = size
@@ -29,8 +31,9 @@ class Board:
         self.flags = 0  # The number of flags
         self.boxes = []  # A list that contain all of the boxes
         self.clickedNodes = []  # Contains the clicked nodes (helps checking for victory)
-        self.clicks = 0   # Number of clicks to check for victory
-        self.mines = round((self.size[0] * self.size[1]) * (10/64))  # The number of mines, Identified by the game size
+        self.clicks = 0  # Number of clicks to check for victory
+        self.mines = round(
+            (self.size[0] * self.size[1]) * (10 / 64))  # The number of mines, Identified by the game size
 
         # Initialize the timer
         self.start_time = time
@@ -61,10 +64,14 @@ class Board:
                 self.boxes[i]['button'].grid(row=x + 1, column=y, sticky=N + S + E + W)
                 self.boxes[i]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
                 self.boxes[i]['button'].bind('<Button-3>', self.rclick_wrapper(x, y))
-
-        self.controller = controller(self)
-        # Bot function
-        # self.left_click([(0, 0), (7, 7)])
+        if is_ai:
+            self.controller = AiController(game_board,
+                                           self.left_click,
+                                           self.highlight,
+                                           self.highlight_sec,
+                                           self.add_flag)
+            # Bot function
+            # self.left_click([(0, 0), (7, 7)])
 
     def lclick_wrapper(self, x: int, y: int):
 
@@ -72,7 +79,7 @@ class Board:
 
     def rclick_wrapper(self, x: int, y: int):
 
-        return lambda Button: self.add_flag(x, y)
+        return lambda Button: self.add_flag((x, y))
 
     def open_box(self, x: int, y: int):
 
@@ -111,7 +118,9 @@ class Board:
                 self.victory()
         return changed_nodes
 
-    def add_flag(self, x: int, y: int):
+    def add_flag(self, pos):
+        x = pos[0]
+        y = pos[1]
         index = x * self.size[0] + y
         # If this box not lift clicked, mark it as a flag
         if not self.boxes[index]['isFlagged']:
