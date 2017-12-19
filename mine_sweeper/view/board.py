@@ -3,6 +3,7 @@ import time
 from tkinter import *
 from tkinter.messagebox import *
 
+from mine_sweeper.controller.ui_controller import UiController
 from mine_sweeper.controller.ai_controller import AiController
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.view.colors import colors
@@ -63,22 +64,17 @@ class Board:
                 })
                 # Lay the boxes on the board
                 self.boxes[i]['button'].grid(row=x + 1, column=y, sticky=N + S + E + W)
-                self.boxes[i]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
-                self.boxes[i]['button'].bind('<Button-3>', self.rclick_wrapper(x, y))
         if is_ai:
             self.controller = AiController(game_board,
                                            self.open_box,
                                            self.highlight,
                                            self.highlight_sec,
                                            self.add_flag)
-
-    def lclick_wrapper(self, x: int, y: int):
-
-        return lambda Button: self.open_box((x, y))
-
-    def rclick_wrapper(self, x: int, y: int):
-
-        return lambda Button: self.add_flag((x, y))
+        else:
+            self.controller = UiController(game_board,
+                                           self.boxes,
+                                           self.open_box,
+                                           self.add_flag)
 
     def open_box(self, pos):
         x = pos[0]
@@ -109,8 +105,9 @@ class Board:
                     weight = ' '
                 index = pos[0] * self.size[0] + pos[1]
                 self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
-                self.boxes[index]['button'].unbind('<Button-1>')
-                self.boxes[index]['button'].unbind('<Button-3>')
+                if not self.is_ai:
+                    self.boxes[index]['button'].unbind('<Button-1>')
+                    self.boxes[index]['button'].unbind('<Button-3>')
                 if changed_node not in self.clickedNodes:
                     self.clickedNodes.append(changed_node)
                     self.clicks += 1
@@ -134,7 +131,8 @@ class Board:
         elif self.boxes[index]['isFlagged']:
             self.boxes[index]['button'].configure(text=" ")
             self.boxes[index]['isFlagged'] = False
-            self.boxes[index]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
+            if not self.is_ai:
+                self.boxes[index]['button'].bind('<Button-1>', self.controller.lclick_wrapper(x, y))
             self.flags -= 1
 
         # Update the flags count
