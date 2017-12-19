@@ -40,6 +40,12 @@ class Menu:
             width = 8
             height = 8
 
+        if width < 4:
+            width = 4
+
+        if height < 4:
+            height = 4
+
         self.frame.destroy()
         game_board = GameBoard.get_instance()
         game_board.generate_initial_state(height, width)
