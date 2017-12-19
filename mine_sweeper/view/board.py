@@ -93,9 +93,22 @@ class Board:
         changed_nodes = self.game_board.discover(value)
 
         if value.node_data.mine:
-            pos = value.pos
-            index = pos[0] * self.size[0] + pos[1]
-            self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
+            for x in range(self.size[0]):
+                for y in range(self.size[1]):
+                    v = self.game_board.get_graph_nodes_as_list()[x][y]
+                    self.game_board.discover(v)
+                    pos = v.pos
+                    index = pos[0] * self.size[0] + pos[1]
+                    if v.node_data.mine:
+                        if v == value:
+                            self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
+                        else:
+                            if not self.boxes[index]['isFlagged']:
+                                self.boxes[index]['button'].configure(text="*", fg="black")
+                    else:
+                        if self.boxes[index]['isFlagged']:
+                            self.boxes[index]['button'].configure(fg="red")
+
             self.gameover()
         elif value.node_data.weight >= 0:
             for changed_node in changed_nodes:
