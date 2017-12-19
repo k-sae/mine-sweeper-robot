@@ -109,6 +109,7 @@ class Board:
                 index = pos[0] * self.size[0] + pos[1]
                 self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
                 self.boxes[index]['button'].unbind('<Button-1>')
+                self.boxes[index]['button'].unbind('<Button-3>')
                 if changed_node not in self.clickedNodes:
                     self.clickedNodes.append(changed_node)
                     self.clicks += 1
