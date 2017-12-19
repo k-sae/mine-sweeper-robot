@@ -20,6 +20,7 @@ class Board:
         # 1 win and -1 lose
         self.game_state = 0
         frame = Frame(self.master)
+        self.is_ai = is_ai
         # Make the window responsive
         frame.grid(row=0, column=0, sticky=N + S + E + W)
 
@@ -151,7 +152,7 @@ class Board:
         showinfo("Game Over", "You Lose!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
-            self.__init__(self.master, self.size, self.game_board, self.controller.__class__)
+            self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
             self.master.destroy()
 
@@ -180,7 +181,7 @@ class Board:
 
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
-            self.__init__(self.master, self.size, self.game_board, self.controller.__class__)
+            self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
             self.master.destroy()
 
