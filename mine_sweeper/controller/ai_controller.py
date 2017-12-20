@@ -1,5 +1,5 @@
 from threading import *
-
+import operator
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.model.node import Node
 
@@ -53,7 +53,7 @@ class AiController:
 
         # list holds the weighted nodes in order to traverse them later
         self.nodes_to_traverse = []
-
+        self.nodes_weighted ={}
         # a list contain all the nodes that is hundred percent sure they are mines
         self.mine_vault = []
 
@@ -89,22 +89,26 @@ class AiController:
         else:
             for node in self.high_priority_nodes:
                 if node not in self.mine_vault:
+                    self.check_and_remove_weight_node(node)
                     self.discover_node(node.pos)
         self.high_priority_nodes.clear()
 
     def start_weighting(self, nodes: [], parent: Node):
-        if len(nodes) == parent.node_data.weight:
+        if len(nodes) <= parent.node_data.weight:
             self.add_to_the_vault(nodes)
             self.nodes_to_traverse.remove(parent)
             if self.ignored_nodes_highlight_call_back is not None:
                 self.ignored_nodes_highlight_call_back(parent.pos)
 
             for node in nodes:
+                self.check_and_remove_weight_node(node)
                 for neighbour in self.game_board.game_graph.m_graph[node]:
                     # self.board.highlight_sec(neighbour.pos)
                     if neighbour.node_data is not None:
+                        #send  node   descoverd before
                         self.back_track_nodes(neighbour)
-
+        else:
+            self.estimate(nodes,parent)
     def back_track_nodes(self, node):
         if self.get_un_risky_weight(node) == 0:
             # highlight as traversed
@@ -121,6 +125,10 @@ class AiController:
                 if neighbour.node_data is None and neighbour not in self.mine_vault:
                     self.high_priority_nodes.append(neighbour)
 
+        else:
+            for neighbour in self.game_board.game_graph.m_graph[node]:
+                if neighbour in self.nodes_weighted.keys():
+                   self.nodes_weighted[neighbour] -=1
     def get_un_risky_weight(self, node: Node):
         count = node.node_data.weight
         for neighbour in self.game_board.game_graph.m_graph[node]:
@@ -137,12 +145,30 @@ class AiController:
 
     # TODO
     def discover_rand_node(self):
-        print("choosing a random node")
-        for nodes in self.game_board.get_graph_nodes_as_list():
-            for node in nodes:
-                if node.node_data is None and node not in self.mine_vault:
-                    self.discover_node(node.pos)
-                    return
+        #print("choosing a random node")
+        print(str(self.nodes_weighted))
+        if len(self.nodes_weighted )>0:
+            node = sorted(self.nodes_weighted.items(), key=operator.itemgetter(1))[0]
+            self.check_and_remove_weight_node(node[0])
+            self.discover_node(node[0].pos)
+
+        else:
+            for nodes in self.game_board.get_graph_nodes_as_list():
+                for node in nodes:
+                    if node.node_data is None and node not in self.mine_vault:
+                        self.check_and_remove_weight_node(node)
+                        self.discover_node(node.pos)
+                        return
 
     def wait_till_ai_finish(self):
         self.ai_thread.join()
+    def estimate (self , nodes , parent):
+        node_weight=self.get_un_risky_weight(parent)
+        for node in nodes:
+            if node not in self.nodes_weighted.keys():
+                self.nodes_weighted[node] =node_weight
+            else:
+                self.nodes_weighted[node] += node_weight
+    def check_and_remove_weight_node(self,node):
+        if node in self.nodes_weighted.keys():
+            self.nodes_weighted.pop(node)
