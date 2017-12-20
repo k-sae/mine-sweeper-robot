@@ -22,9 +22,9 @@ class Menu:
         self.heightEntry = Entry(self.frame)
         self.heightEntry.grid(row=1, column=1)
 
-        self.AIBtn = Button(self.frame, text='AI Controller', command=lambda: self.invoke_board(AiController))
+        self.AIBtn = Button(self.frame, text='AI Controller', command=lambda: self.invoke_board(True))
         self.AIBtn.grid(row=2, column=0)
-        self.MouseBtn = Button(self.frame, text='Mouse Controller', command=lambda: self.invoke_board(UiController))
+        self.MouseBtn = Button(self.frame, text='Mouse Controller', command=lambda: self.invoke_board(False))
         self.MouseBtn.grid(row=2, column=1)
 
         self.frame.rowconfigure(0, weight=1)
@@ -32,7 +32,7 @@ class Menu:
 
         self.frame.pack(pady=250)
 
-    def invoke_board(self, controller):
+    def invoke_board(self, is_ai):
         try:
             width = int(self.widthEntry.get())
             height = int(self.heightEntry.get())
@@ -40,7 +40,13 @@ class Menu:
             width = 8
             height = 8
 
+        if width < 4:
+            width = 4
+
+        if height < 4:
+            height = 4
+
         self.frame.destroy()
         game_board = GameBoard.get_instance()
         game_board.generate_initial_state(height, width)
-        Board(self.master, (width, height), game_board, controller)
+        Board(self.master, (height, width), game_board, is_ai)
