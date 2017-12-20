@@ -14,6 +14,7 @@ class GameBoard:
         self.game_graph = Graph(True)
         self.__game_data = {}
         self.__nodes_list = None
+        self.__discoverd_count = 0
 
         # zero indicates unsolved
         # 1 win and -1 lose
@@ -38,6 +39,9 @@ class GameBoard:
             self.game_state = -1
             return {node}
         elif node_data.weight == 0:
+            self.__discoverd_count+=1
+            if self.__discoverd_count == self.row*self.col - (round(self.row * self.col * (10/64))):
+                self.game_state=1
             discovered.add(node)
             all_adjecent = self.game_graph.m_graph[node]
             # loop to un discovered nodes
@@ -49,6 +53,9 @@ class GameBoard:
             # keep discovering with connected nodes till a node with data found
             # i suggest bread first search (recursive)
         else:
+            self.__discoverd_count+=1
+            if self.__discoverd_count == self.row*self.col - (round(self.row * self.col * (10/64))):
+                self.game_state=1
             return {node}
             # in all cases update the discovered node
 
