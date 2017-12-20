@@ -63,12 +63,14 @@ class AiController:
         self.ai_thread.start()
 
     def start_ai_solver(self):
+        #discover  node  in the   middel board
         self.discover_node((int(self.game_board.row / 2), int(self.game_board.col / 2)))
         while self.game_board.game_state == 0:
             self.start_discovering()
             # time.sleep(0.5)
 
     def discover_node(self, pos):
+        #get all nodes   connect  with this  node
         nodes = self.discover_call_back(pos)
         for node in nodes:
             if node.node_data.weight > 0 and node not in self.nodes_to_traverse:
@@ -128,7 +130,9 @@ class AiController:
         else:
             for neighbour in self.game_board.game_graph.m_graph[node]:
                 if neighbour in self.nodes_weighted.keys():
-                   self.nodes_weighted[neighbour] -=1
+                   new_weight = self.nodes_weighted[neighbour] [0] -1
+                   neighbours  = self.nodes_weighted[neighbour][1]
+                   self.nodes_weighted[neighbour] =(new_weight,neighbours)
     def get_un_risky_weight(self, node: Node):
         count = node.node_data.weight
         for neighbour in self.game_board.game_graph.m_graph[node]:
@@ -148,9 +152,10 @@ class AiController:
         #print("choosing a random node")
         print(str(self.nodes_weighted))
         if len(self.nodes_weighted )>0:
-            node = sorted(self.nodes_weighted.items(), key=operator.itemgetter(1))[0]
-            self.check_and_remove_weight_node(node[0])
-            self.discover_node(node[0].pos)
+            #node = sorted(self.nodes_weighted.items(), key=operator.itemgetter(0))[0]
+            node = self.choose_node()
+            self.check_and_remove_weight_node(node)
+            self.discover_node(node.pos)
 
         else:
             for nodes in self.game_board.get_graph_nodes_as_list():
@@ -166,9 +171,24 @@ class AiController:
         node_weight=self.get_un_risky_weight(parent)
         for node in nodes:
             if node not in self.nodes_weighted.keys():
-                self.nodes_weighted[node] =node_weight
+                self.nodes_weighted[node] = (parent.node_data.weight,[parent])
             else:
-                self.nodes_weighted[node] += node_weight
+                if  parent not in  (self.nodes_weighted[node][1]):
+                  total_weight = self.nodes_weighted[node][0] + parent.node_data.weight
+                  list_parent = self.nodes_weighted[node][1]
+                  list_parent.append(parent)
+                  self.nodes_weighted[node]= ( total_weight,list_parent)
+
     def check_and_remove_weight_node(self,node):
         if node in self.nodes_weighted.keys():
             self.nodes_weighted.pop(node)
+    def choose_node (self,arrange=1):
+        #send arrange =1 if want pick min else send -1
+         m_node = None
+         m_weight = 0
+         for node in self.nodes_weighted.keys():
+             if(m_node == None or m_weight*arrange > self.nodes_weighted[node][0]*arrange):
+                 m_node = node
+                 m_weight = self.nodes_weighted[node][0]
+
+         return  m_node
