@@ -21,15 +21,18 @@ if __name__ == "__main__":
     # use ai_controller.wait_till_ai_finish()
     # to prevent it from closing
     # hf
-    print("welcome\n")
-    print("choose width / height\n")
-    width=int(input("enter width:\n"))
-    height=int(input("enter height:\n"))
-    game_board = GameBoard.get_instance()
-    game_board.generate_initial_state(height, width)
-    #controller = AiController(game_board ,GameBoard.get_instance().discover)
-    #controller.start_ai_solver()
-    #controller.wait_till_ai_finish()
+    if(sys.argv=='c'):
+        print("welcome\n")
+        game_board = GameBoard.get_instance()
+        if(sys.argv=='s'):
+            height=sys.argv[2]
+            width =sys.argv[3]
+            game_board.generate_initial_state(height, width)
+        else:
+            game_board.generate_initial_state(8, 8)
+        #controller = AiController(game_board ,GameBoard.get_instance().discover)
+        #controller.start_ai_solver()
+        #controller.wait_till_ai_finish()
     root = Tk()
     root.minsize(640, 640)
     if len(sys.argv) > 1:
