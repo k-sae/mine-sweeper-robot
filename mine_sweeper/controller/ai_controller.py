@@ -111,7 +111,7 @@ class AiController:
                     self.discover_node(node)
 
                     self.check_and_remove_weight_node(node)
-                    self.discover_node(node.pos)
+                    self.discover_node(node)
 
         self.high_priority_nodes.clear()
 
@@ -172,14 +172,14 @@ class AiController:
             #node = sorted(self.nodes_weighted.items(), key=operator.itemgetter(0))[0]
             node = self.choose_node()
             self.check_and_remove_weight_node(node)
-            self.discover_node(node.pos)
+            self.discover_node(node)
 
         else:
             for nodes in self.game_board.get_graph_nodes_as_list():
                 for node in nodes:
                     if node.node_data is None and node not in self.mine_vault:
                         self.check_and_remove_weight_node(node)
-                        self.discover_node(node.pos)
+                        self.discover_node(node)
                         return
 
 
