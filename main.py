@@ -49,13 +49,13 @@ if __name__ == "__main__":
         if is_console:
             game_board = GameBoard.get_instance()
             print(size)
-            print(is_console)
             game_board.generate_initial_state(size[1], size[0])
 
             controller = AiController(game_board, GameBoard.get_instance().discover)
             controller.start_ai_solver()
             controller.wait_till_ai_finish()
-
+            # 1 win, -1 lose
+            print(game_board.game_state)
     else:
         root = Tk()
         root.minsize(640, 640)
