@@ -21,12 +21,12 @@ class UiController:
                 self.boxes[i]['button'].bind('<Button-3>', self.rclick_wrapper(x, y))
 
     def lclick_wrapper(self, x: int, y: int):
-
-        return lambda Button: self.discover_call_back((x, y))
+        node = self.game_board.get_graph_nodes_as_list()[x][y]
+        return lambda Button: self.discover_call_back(node)
 
     def rclick_wrapper(self, x: int, y: int):
-
-        return lambda Button: self.add_flag_call_call_back((x, y))
+        node = self.game_board.get_graph_nodes_as_list()[x][y]
+        return lambda Button: self.add_flag_call_call_back(node)
 
     def wait_till_ai_finish(self):
         pass

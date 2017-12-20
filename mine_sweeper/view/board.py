@@ -77,31 +77,24 @@ class Board:
                                            self.open_box,
                                            self.add_flag)
 
-    def open_box(self, pos):
-        x = pos[0]
-        y = pos[1]
-
+    def open_box(self, node):
         if self.first_click:
             self.first_click = False
-            self.game_board.set_mines(self.game_board.get_graph_nodes_as_list()[x][y])
+            self.game_board.set_mines(self.game_board.get_graph_nodes_as_list()[node.pos[0]][node.pos[1]])
             self.start_time = time.time()
             self.update_timer()
 
-        value = self.game_board.get_graph_nodes_as_list()[x][y]
-
-        # self.game_board.discover(value)
         # TODO belal
-        changed_nodes = self.game_board.discover(value)
+        changed_nodes = self.game_board.discover(node)
 
-        if value.node_data.mine:
+        if node.node_data.mine:
             for x in range(self.size[0]):
                 for y in range(self.size[1]):
-                    v = self.game_board.get_graph_nodes_as_list()[x][y]
-                    self.game_board.discover(v)
-                    pos = v.pos
-                    index = pos[0] * self.size[0] + pos[1]
-                    if v.node_data.mine:
-                        if v == value:
+                    value = self.game_board.get_graph_nodes_as_list()[x][y]
+                    self.game_board.discover(value)
+                    index = value.pos[0] * self.size[0] + value.pos[1]
+                    if value.node_data.mine:
+                        if value == node:
                             self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
                         else:
                             if not self.boxes[index]['isFlagged']:
@@ -112,13 +105,12 @@ class Board:
 
             ai_thread = Thread(target=self.gameover, args=())
             ai_thread.start()
-        elif value.node_data.weight >= 0:
+        elif node.node_data.weight >= 0:
             for changed_node in changed_nodes:
-                pos = changed_node.pos
                 weight = changed_node.node_data.weight
                 if weight == 0:
                     weight = ' '
-                index = pos[0] * self.size[0] + pos[1]
+                index = changed_node.pos[0] * self.size[0] + changed_node.pos[1]
                 self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
                 if not self.is_ai:
                     self.boxes[index]['button'].unbind('<Button-1>')
@@ -133,22 +125,20 @@ class Board:
                 ai_thread.start()
         return changed_nodes
 
-    def add_flag(self, pos):
-        x = pos[0]
-        y = pos[1]
-        index = x * self.size[0] + y
-        # If this box not lift clicked, mark it as a flag
+    def add_flag(self, node):
+        index = node.pos[0] * self.size[0] + node.pos[1]
+        # If this box not left clicked, mark it as a flag
         if not self.boxes[index]['isFlagged']:
             self.boxes[index]['button'].configure(text="F")
             self.boxes[index]['isFlagged'] = True
             self.boxes[index]['button'].unbind('<Button-1>')
             self.flags += 1
-        # If this box id flagged, unflag
+        # If this box is flagged, unflag
         elif self.boxes[index]['isFlagged']:
             self.boxes[index]['button'].configure(text=" ")
             self.boxes[index]['isFlagged'] = False
             if not self.is_ai:
-                self.boxes[index]['button'].bind('<Button-1>', self.controller.lclick_wrapper(x, y))
+                self.boxes[index]['button'].bind('<Button-1>', self.controller.lclick_wrapper(node.pos[0], node.pos[1]))
             self.flags -= 1
 
         # Update the flags count
@@ -204,10 +194,10 @@ class Board:
             # self.master.destroy()
             sys.exit(0)
 
-    def highlight(self, pos):
-        index = pos[0] * self.size[0] + pos[1]
+    def highlight(self, node):
+        index = node.pos[0] * self.size[0] + node.pos[1]
         self.boxes[index]['button'].configure(bg="yellow")
 
-    def highlight_sec(self, pos):
-        index = pos[0] * self.size[0] + pos[1]
+    def highlight_sec(self, node):
+        index = node.pos[0] * self.size[0] + node.pos[1]
         self.boxes[index]['button'].configure(bg="green")

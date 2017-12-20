@@ -67,14 +67,15 @@ class AiController:
         self.ai_thread.start()
 
     def start_ai_solver(self):
-        self.discover_node((int(self.game_board.row / 2), int(self.game_board.col / 2)))
+        node = self.game_board.get_graph_nodes_as_list()[int(self.game_board.row / 2)][int(self.game_board.col / 2)]
+        self.discover_node(node)
         while self.game_board.game_state == 0:
             self.start_discovering()
             # time.sleep(0.5)
         self.ai_state = 1
 
-    def discover_node(self, pos):
-        nodes = self.discover_call_back(pos)
+    def discover_node(self, node):
+        nodes = self.discover_call_back(node)
         for node in nodes:
             if node.node_data.weight > 0 and node not in self.nodes_to_traverse:
                 self.nodes_to_traverse.append(node)
@@ -94,7 +95,7 @@ class AiController:
         else:
             for node in self.high_priority_nodes:
                 if node not in self.mine_vault:
-                    self.discover_node(node.pos)
+                    self.discover_node(node)
         self.high_priority_nodes.clear()
 
     def start_weighting(self, nodes: [], parent: Node):
@@ -102,11 +103,11 @@ class AiController:
             self.add_to_the_vault(nodes)
             self.nodes_to_traverse.remove(parent)
             if self.ignored_nodes_highlight_call_back is not None:
-                self.ignored_nodes_highlight_call_back(parent.pos)
+                self.ignored_nodes_highlight_call_back(parent)
 
             for node in nodes:
                 for neighbour in self.game_board.game_graph.m_graph[node]:
-                    # self.board.highlight_sec(neighbour.pos)
+                    # self.board.highlight_sec(neighbour)
                     if neighbour.node_data is not None:
                         self.back_track_nodes(neighbour)
 
@@ -114,13 +115,13 @@ class AiController:
         if self.get_un_risky_weight(node) == 0:
             # highlight as traversed
             if self.discovered_nodes_highlight_call_back is not None:
-                self.discovered_nodes_highlight_call_back(node.pos)
+                self.discovered_nodes_highlight_call_back(node)
 
             if node in self.nodes_to_traverse:
                 self.nodes_to_traverse.remove(node)
                 # highlight unneeded
                 if self.ignored_nodes_highlight_call_back is not None:
-                    self.ignored_nodes_highlight_call_back(node.pos)
+                    self.ignored_nodes_highlight_call_back(node)
 
             for neighbour in self.game_board.game_graph.m_graph[node]:
                 if neighbour.node_data is None and neighbour not in self.mine_vault:
@@ -138,7 +139,7 @@ class AiController:
             if node not in self.mine_vault:
                 self.mine_vault.append(node)
                 if self.add_flag_call_call_back is not None:
-                    self.add_flag_call_call_back(node.pos)
+                    self.add_flag_call_call_back(node)
 
     # TODO
     def discover_rand_node(self):
@@ -146,7 +147,7 @@ class AiController:
         for nodes in self.game_board.get_graph_nodes_as_list():
             for node in nodes:
                 if node.node_data is None and node not in self.mine_vault:
-                    self.discover_node(node.pos)
+                    self.discover_node(node)
                     return
 
     def wait_till_ai_finish(self):
