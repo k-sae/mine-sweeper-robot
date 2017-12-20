@@ -76,9 +76,10 @@ class AiController:
 
     def discover_node(self, node):
         nodes = self.discover_call_back(node)
-        for node in nodes:
-            if node.node_data.weight > 0 and node not in self.nodes_to_traverse and node not in self.exiled_nodes:
-                self.nodes_to_traverse.append(node)
+        nodes_list = list(nodes)
+        for i in range(len(nodes)):
+            if nodes_list[i].node_data.weight > 0 and nodes_list[i] not in self.nodes_to_traverse and nodes_list[i] not in self.exiled_nodes:
+                self.nodes_to_traverse.append(nodes_list[i])
 
     def start_discovering(self):
         for node in self.nodes_to_traverse:
