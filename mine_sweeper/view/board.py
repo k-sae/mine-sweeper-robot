@@ -80,7 +80,6 @@ class Board:
     def open_box(self, node):
         if self.first_click:
             self.first_click = False
-            self.game_board.set_mines(self.game_board.get_graph_nodes_as_list()[node.pos[0]][node.pos[1]])
             self.start_time = time.time()
             self.update_timer()
 

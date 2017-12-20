@@ -20,6 +20,7 @@ class GameBoard:
         # 1 win and -1 lose
         self.game_state = 0
         self.game_state = 0
+        self.first_time = True
 
     # TODO
     # this function is  responsible for discovering the game board
@@ -27,6 +28,9 @@ class GameBoard:
     # see how to access it in the example below
     # modify the function as u like but by using default values
     def discover(self, node: Node, discovered=set()) -> set():
+        if self.first_time:
+            self.first_time = False
+            self.set_mines(node)
         node_data = self.__game_data[node]
         node_data.__class__ = NodeData
         if node.node_data is not None:
