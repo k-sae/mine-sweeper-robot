@@ -20,7 +20,6 @@ class AiController:
 
     def start_ui_solver(self):
         while self.board.game_state == 0:
-            print(len(self.nodes_to_traverse))
             self.start_discovering()
             # time.sleep(0.5)
 
