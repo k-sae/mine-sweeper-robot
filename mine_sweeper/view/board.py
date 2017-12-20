@@ -55,10 +55,10 @@ class Board:
         # get graph nodes
         # Create boxes upon the game size
         for x in range(self.size[0]):
-            Grid.columnconfigure(frame, x, weight=1)
+            Grid.rowconfigure(frame, x + 1, weight=1)
             for y in range(self.size[1]):
                 i = len(self.boxes)
-                Grid.rowconfigure(frame, y + 1, weight=1)
+                Grid.columnconfigure(frame, y, weight=1)
                 self.boxes.append({
                     "button": Button(frame, font='TkDefaultFont 20 bold', text=" ", bg="darkgrey"),
                     "isFlagged": False
