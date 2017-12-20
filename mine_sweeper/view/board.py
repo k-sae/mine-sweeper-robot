@@ -103,8 +103,7 @@ class Board:
                         if self.boxes[index]['isFlagged']:
                             self.boxes[index]['button'].configure(fg="red")
 
-            ai_thread = Thread(target=self.gameover, args=())
-            ai_thread.start()
+            self.gameover()
         elif node.node_data.weight >= 0:
             for changed_node in changed_nodes:
                 weight = changed_node.node_data.weight
@@ -121,8 +120,7 @@ class Board:
 
             # Check for victory
             if self.clicks == (self.size[0] * self.size[1] - self.mines):
-                ai_thread = Thread(target=self.victory, args=())
-                ai_thread.start()
+                self.victory()
         return changed_nodes
 
     def add_flag(self, node):
@@ -154,7 +152,6 @@ class Board:
     def gameover(self):
         self.game_state = -1
         self.master.after_cancel(self.update_timer_id)
-        self.controller.wait_till_ai_finish()
         showinfo("Game Over", "You Lose!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
@@ -168,7 +165,6 @@ class Board:
     def victory(self):
         self.game_state = 1
         self.master.after_cancel(self.update_timer_id)
-        self.controller.wait_till_ai_finish()
         showinfo("Victory!", "You Win!")
 
         try:
