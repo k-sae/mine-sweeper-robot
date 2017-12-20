@@ -1,7 +1,9 @@
 from threading import *
 
+
 import time
 import datetime
+
 
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.model.node import Node
@@ -56,6 +58,11 @@ class AiController:
 
         # list holds the weighted nodes in order to traverse them later
         self.nodes_to_traverse = []
+
+
+        self.nodes_weighted ={}
+        # a list contain all the nodes that is hundred percent sure they are mines
+
         self.mine_vault = []
         self.high_priority_nodes = []
         self.exiled_nodes = []
@@ -65,14 +72,17 @@ class AiController:
         t.start()
 
     def start_ai_solver(self):
+
         start_time = time.time()
         node = self.game_board.get_graph_nodes_as_list()[int(self.game_board.row / 2)][int(self.game_board.col / 2)]
         self.discover_node(node)
+
         while self.game_board.game_state == 0:
             self.start_discovering()
             # time.sleep(0.5)
         self.ai_state = 1
         self.duration = time.time() - start_time
+
 
     def discover_node(self, node):
         nodes = self.discover_call_back(node)
@@ -80,6 +90,7 @@ class AiController:
         for i in range(len(nodes)):
             if nodes_list[i].node_data.weight > 0 and nodes_list[i] not in self.nodes_to_traverse and nodes_list[i] not in self.exiled_nodes:
                 self.nodes_to_traverse.append(nodes_list[i])
+
 
     def start_discovering(self):
         for node in self.nodes_to_traverse:
@@ -96,21 +107,29 @@ class AiController:
         else:
             for node in self.high_priority_nodes:
                 if node not in self.mine_vault:
+
                     self.discover_node(node)
+
+                    self.check_and_remove_weight_node(node)
+                    self.discover_node(node.pos)
+
         self.high_priority_nodes.clear()
 
     def start_weighting(self, nodes: [], parent: Node):
-        if len(nodes) == parent.node_data.weight:
+        if len(nodes) <= parent.node_data.weight:
             self.add_to_the_vault(nodes)
             self.nodes_to_traverse.remove(parent)
             if self.ignored_nodes_highlight_call_back is not None:
                 self.ignored_nodes_highlight_call_back(parent)
             for node in nodes:
+                self.check_and_remove_weight_node(node)
                 for neighbour in self.game_board.game_graph.m_graph[node]:
                     # self.board.highlight_sec(neighbour.pos)
                     if neighbour.node_data is not None:
+                        #send  node   descoverd before
                         self.back_track_nodes(neighbour)
-
+        else:
+            self.estimate(nodes,parent)
     def back_track_nodes(self, node):
         if self.get_un_risky_weight(node) == 0:
             if self.discovered_nodes_highlight_call_back is not None:
@@ -124,6 +143,12 @@ class AiController:
                 if neighbour.node_data is None and neighbour not in self.mine_vault:
                     self.high_priority_nodes.append(neighbour)
 
+        else:
+            for neighbour in self.game_board.game_graph.m_graph[node]:
+                if neighbour in self.nodes_weighted.keys():
+                   new_weight = self.nodes_weighted[neighbour] [0] -1
+                   neighbours  = self.nodes_weighted[neighbour][1]
+                   self.nodes_weighted[neighbour] =(new_weight,neighbours)
     def get_un_risky_weight(self, node: Node):
         count = node.node_data.weight
         for neighbour in self.game_board.game_graph.m_graph[node]:
@@ -140,15 +165,52 @@ class AiController:
 
     # TODO
     def discover_rand_node(self):
-        print("choosing a random node")
-        for nodes in self.game_board.get_graph_nodes_as_list():
-            for node in nodes:
-                if node.node_data is None and node not in self.mine_vault:
-                    self.discover_node(node)
-                    return
+
+        #print("choosing a random node")
+        print(str(self.nodes_weighted))
+        if len(self.nodes_weighted )>0:
+            #node = sorted(self.nodes_weighted.items(), key=operator.itemgetter(0))[0]
+            node = self.choose_node()
+            self.check_and_remove_weight_node(node)
+            self.discover_node(node.pos)
+
+        else:
+            for nodes in self.game_board.get_graph_nodes_as_list():
+                for node in nodes:
+                    if node.node_data is None and node not in self.mine_vault:
+                        self.check_and_remove_weight_node(node)
+                        self.discover_node(node.pos)
+                        return
+
+
+    def estimate (self , nodes , parent):
+        node_weight=self.get_un_risky_weight(parent)
+        for node in nodes:
+            if node not in self.nodes_weighted.keys():
+                self.nodes_weighted[node] = (parent.node_data.weight,[parent])
+            else:
+                if  parent not in  (self.nodes_weighted[node][1]):
+                  total_weight = self.nodes_weighted[node][0] + parent.node_data.weight
+                  list_parent = self.nodes_weighted[node][1]
+                  list_parent.append(parent)
+                  self.nodes_weighted[node]= ( total_weight,list_parent)
+
+    def check_and_remove_weight_node(self,node):
+        if node in self.nodes_weighted.keys():
+            self.nodes_weighted.pop(node)
+    def choose_node (self,arrange=1):
+        #send arrange =1 if want pick min else send -1
+         m_node = None
+         m_weight = 0
+         for node in self.nodes_weighted.keys():
+             if(m_node == None or m_weight*arrange > self.nodes_weighted[node][0]*arrange):
+                 m_node = node
+                 m_weight = self.nodes_weighted[node][0]
+
+         return  m_node
 
     def wait_till_ai_finish(self):
-        while self.ai_state == 0:
-            pass
-        t = datetime.datetime.fromtimestamp(float(self.duration)).strftime('%M:%S:%f')
-        print('Duration:', t)
+      while self.ai_state == 0:
+        pass
+      t = datetime.datetime.fromtimestamp(float(self.duration)).strftime('%M:%S:%f')
+      print('Duration:', t)
