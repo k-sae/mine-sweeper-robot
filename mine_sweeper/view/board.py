@@ -1,5 +1,6 @@
 import datetime
 import time
+from threading import Thread
 from tkinter import *
 from tkinter.messagebox import *
 
@@ -100,7 +101,8 @@ class Board:
             pos = value.pos
             index = pos[0] * self.size[0] + pos[1]
             self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
-            self.gameover()
+            ai_thread = Thread(target=self.gameover, args=())
+            ai_thread.start()
         elif value.node_data.weight >= 0:
             for changed_node in changed_nodes:
                 pos = changed_node.pos
@@ -117,7 +119,8 @@ class Board:
 
             # Check for victory
             if self.clicks == (self.size[0] * self.size[1] - self.mines):
-                self.victory()
+                ai_thread = Thread(target=self.victory, args=())
+                ai_thread.start()
         return changed_nodes
 
     def add_flag(self, pos):
@@ -150,6 +153,7 @@ class Board:
     def gameover(self):
         self.master.after_cancel(self.update_timer_id)
         self.game_state = -1
+        self.controller.wait_till_ai_finish()
         showinfo("Game Over", "You Lose!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
@@ -161,6 +165,7 @@ class Board:
     def victory(self):
         self.game_state = 1
         self.master.after_cancel(self.update_timer_id)
+        self.controller.wait_till_ai_finish()
         showinfo("Victory!", "You Win!")
 
         try:
