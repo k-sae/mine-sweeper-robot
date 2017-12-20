@@ -16,7 +16,7 @@ class UiController:
     def bind_boxes(self):
         for x in range(self.game_board.row):
             for y in range(self.game_board.col):
-                i = x * self.game_board.row + y
+                i = x * self.game_board.col + y
                 self.boxes[i]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
                 self.boxes[i]['button'].bind('<Button-3>', self.rclick_wrapper(x, y))
 

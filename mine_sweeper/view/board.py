@@ -91,7 +91,7 @@ class Board:
                 for y in range(self.size[1]):
                     value = self.game_board.get_graph_nodes_as_list()[x][y]
                     self.game_board.discover(value)
-                    index = value.pos[0] * self.size[0] + value.pos[1]
+                    index = value.pos[0] * self.size[1] + value.pos[1]
                     if value.node_data.mine:
                         if value == node:
                             self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
@@ -109,7 +109,7 @@ class Board:
                 weight = changed_node.node_data.weight
                 if weight == 0:
                     weight = ' '
-                index = changed_node.pos[0] * self.size[0] + changed_node.pos[1]
+                index = changed_node.pos[0] * self.size[1] + changed_node.pos[1]
                 self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
                 if not self.is_ai:
                     self.boxes[index]['button'].unbind('<Button-1>')
@@ -125,7 +125,7 @@ class Board:
         return changed_nodes
 
     def add_flag(self, node):
-        index = node.pos[0] * self.size[0] + node.pos[1]
+        index = node.pos[0] * self.size[1] + node.pos[1]
         # If this box not left clicked, mark it as a flag
         if not self.boxes[index]['isFlagged']:
             self.boxes[index]['button'].configure(text="F")
@@ -194,9 +194,9 @@ class Board:
             sys.exit(0)
 
     def highlight(self, node):
-        index = node.pos[0] * self.size[0] + node.pos[1]
+        index = node.pos[0] * self.size[1] + node.pos[1]
         self.boxes[index]['button'].configure(bg="yellow")
 
     def highlight_sec(self, node):
-        index = node.pos[0] * self.size[0] + node.pos[1]
+        index = node.pos[0] * self.size[1] + node.pos[1]
         self.boxes[index]['button'].configure(bg="green")
