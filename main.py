@@ -4,7 +4,7 @@ from mine_sweeper.view.menu import Menu
 from mine_sweeper.controller.ai_controller import AiController
 from mine_sweeper.view.board import Board
 from mine_sweeper.controller.game_board import GameBoard
-7
+
 
 '''
     list of params:
@@ -48,9 +48,8 @@ if __name__ == "__main__":
 
         if is_console:
             game_board = GameBoard.get_instance()
-            print(size)
             game_board.generate_initial_state(size[1], size[0])
-
+            print(size)
             controller = AiController(game_board, GameBoard.get_instance().discover)
             controller.start_ai_solver()
             controller.wait_till_ai_finish()

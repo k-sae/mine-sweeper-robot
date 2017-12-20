@@ -1,6 +1,7 @@
 from threading import *
 
 import time
+import datetime
 
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.model.node import Node
@@ -64,6 +65,8 @@ class AiController:
         self.ai_state = 0
         self.ai_thread = Thread(target=self.start_ai_solver, args=())
         self.ai_thread.setDaemon(True)
+        self.start_time = time.time()
+        self.duration = time.time()
         self.ai_thread.start()
 
     def start_ai_solver(self):
@@ -73,6 +76,7 @@ class AiController:
             self.start_discovering()
             # time.sleep(0.5)
         self.ai_state = 1
+        self.duration = time.time() - self.start_time
 
     def discover_node(self, node):
         nodes = self.discover_call_back(node)
@@ -152,4 +156,6 @@ class AiController:
 
     def wait_till_ai_finish(self):
         while self.ai_state == 0:
-            time.sleep(0.5)
+            pass
+        t = datetime.datetime.fromtimestamp(float(self.duration)).strftime('%M:%S:%f')
+        print('Duration:', t)
