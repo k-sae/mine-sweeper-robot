@@ -1,5 +1,7 @@
 from threading import *
 
+import time
+
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.model.node import Node
 
@@ -59,6 +61,7 @@ class AiController:
 
         # holds the nodes that are less likely to be mines
         self.high_priority_nodes = []
+        self.ai_state = 0
         self.ai_thread = Thread(target=self.start_ai_solver, args=())
         self.ai_thread.setDaemon(True)
         self.ai_thread.start()
@@ -68,6 +71,7 @@ class AiController:
         while self.game_board.game_state == 0:
             self.start_discovering()
             # time.sleep(0.5)
+        self.ai_state = 1
 
     def discover_node(self, pos):
         nodes = self.discover_call_back(pos)
@@ -146,4 +150,5 @@ class AiController:
                     return
 
     def wait_till_ai_finish(self):
-        self.ai_thread.join()
+        while self.ai_state == 0:
+            time.sleep(0.5)

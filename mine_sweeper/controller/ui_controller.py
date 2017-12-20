@@ -27,3 +27,6 @@ class UiController:
     def rclick_wrapper(self, x: int, y: int):
 
         return lambda Button: self.add_flag_call_call_back((x, y))
+
+    def wait_till_ai_finish(self):
+        pass
