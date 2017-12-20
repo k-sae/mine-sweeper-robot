@@ -62,6 +62,11 @@ class AiController:
 
         # holds the nodes that are less likely to be mines
         self.high_priority_nodes = []
+
+        self.exiled_nodes = []
+
+        self.nodes_to_remove = []
+
         self.ai_state = 0
         self.ai_thread = Thread(target=self.start_ai_solver, args=())
         self.ai_thread.setDaemon(True)
@@ -81,7 +86,7 @@ class AiController:
     def discover_node(self, node):
         nodes = self.discover_call_back(node)
         for node in nodes:
-            if node.node_data.weight > 0 and node not in self.nodes_to_traverse:
+            if node.node_data.weight > 0 and node not in self.nodes_to_traverse and node not in self.exiled_nodes:
                 self.nodes_to_traverse.append(node)
 
     def start_discovering(self):
@@ -92,6 +97,7 @@ class AiController:
                     un_discovered.append(neighbour)
             self.start_weighting(un_discovered, node)
         self.trigger_the_high_priority_nodes()
+        self.remove_exiled_nodes()
 
     def trigger_the_high_priority_nodes(self):
         if len(self.high_priority_nodes) == 0:
@@ -105,13 +111,13 @@ class AiController:
     def start_weighting(self, nodes: [], parent: Node):
         if len(nodes) == parent.node_data.weight:
             self.add_to_the_vault(nodes)
-            self.nodes_to_traverse.remove(parent)
-            if self.ignored_nodes_highlight_call_back is not None:
-                self.ignored_nodes_highlight_call_back(parent)
+            self.nodes_to_remove.append(parent)
+            # if self.ignored_nodes_highlight_call_back is not None:
+            #     self.ignored_nodes_highlight_call_back(parent)
 
             for node in nodes:
                 for neighbour in self.game_board.game_graph.m_graph[node]:
-                    # self.board.highlight_sec(neighbour)
+                    self.ignored_nodes_highlight_call_back(neighbour)
                     if neighbour.node_data is not None:
                         self.back_track_nodes(neighbour)
 
@@ -122,12 +128,13 @@ class AiController:
                 self.discovered_nodes_highlight_call_back(node)
 
             if node in self.nodes_to_traverse:
-                self.nodes_to_traverse.remove(node)
+                self.nodes_to_remove.append(node)
                 # highlight unneeded
-                if self.ignored_nodes_highlight_call_back is not None:
-                    self.ignored_nodes_highlight_call_back(node)
+                # if self.ignored_nodes_highlight_call_back is not None:
+                #     self.ignored_nodes_highlight_call_back(node)
 
             for neighbour in self.game_board.game_graph.m_graph[node]:
+                # self.ignored_nodes_highlight_call_back(neighbour)
                 if neighbour.node_data is None and neighbour not in self.mine_vault:
                     self.high_priority_nodes.append(neighbour)
 
@@ -159,3 +166,12 @@ class AiController:
             pass
         t = datetime.datetime.fromtimestamp(float(self.duration)).strftime('%M:%S:%f')
         print('Duration:', t)
+
+    def remove_exiled_nodes(self):
+        for node in self.nodes_to_remove:
+            if node in self.nodes_to_traverse:
+                self.nodes_to_traverse.remove(node)
+                self.exiled_nodes.append(node)
+            else:
+                self.exiled_nodes.append(node)
+        self.nodes_to_remove.clear()
