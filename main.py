@@ -21,34 +21,21 @@ if __name__ == "__main__":
     # use ai_controller.wait_till_ai_finish()
     # to prevent it from closing
     # hf
-    if(sys.argv=='c'):
-        print("welcome\n")
-        game_board = GameBoard.get_instance()
-        if(sys.argv=='s'):
-            height=sys.argv[2]
-            width =sys.argv[3]
-            game_board.generate_initial_state(height, width)
-        else:
-            game_board.generate_initial_state(8, 8)
-        #controller = AiController(game_board ,GameBoard.get_instance().discover)
-        #controller.start_ai_solver()
-        #controller.wait_till_ai_finish()
-    root = Tk()
-    root.minsize(640, 640)
     if len(sys.argv) > 1:
         try:
-            # short command: python main.py -c ai -s 8,8
-            # long command: python main.py --controller=ai --size=8,8
-            opts, args = getopt.getopt(sys.argv[1:], "c:s:", ["controller=", "size="])
-        except getopt.GetoptError:
-            print('INVALID ARGUMENT')
+            # shorter command: python main.py -cs 8,8
+            # short command: python main.py -c -s 8,8
+            # long command: python main.py --console --size=8,8
+            opts, args = getopt.getopt(sys.argv[1:], "cs:s:", ["console", "size="])
+        except getopt.GetoptError as err:
+            print('INVALID ARGUMENT\n')
+            print(str(err))
             sys.exit(2)
-        is_ai = False
+        is_console = False
         size = (8, 8)
         for opt, arg in opts:
-            if opt in ("-c", "--controller"):
-                if arg.lower() == 'ai':
-                    is_ai = True
+            if opt in ("-c", "--console"):
+                is_console = True
             elif opt in ("-s", "--size"):
                 try:
                     size = eval(arg)
@@ -59,11 +46,18 @@ if __name__ == "__main__":
                 except:
                     pass
 
-        game_board = GameBoard.get_instance()
-        game_board.generate_initial_state(size[1], size[0])
-        Board(root, size, game_board, is_ai)
+        if is_console:
+            game_board = GameBoard.get_instance()
+            print(size)
+            print(is_console)
+            game_board.generate_initial_state(size[1], size[0])
+
+            controller = AiController(game_board, GameBoard.get_instance().discover)
+            controller.start_ai_solver()
+            controller.wait_till_ai_finish()
 
     else:
+        root = Tk()
+        root.minsize(640, 640)
         Menu(root)
-
-    root.mainloop()
+        root.mainloop()
