@@ -3,6 +3,7 @@ import time
 from tkinter import *
 from tkinter.messagebox import *
 
+from mine_sweeper.controller.ui_controller import UiController
 from mine_sweeper.controller.ai_controller import AiController
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.view.colors import colors
@@ -63,22 +64,17 @@ class Board:
                 })
                 # Lay the boxes on the board
                 self.boxes[i]['button'].grid(row=x + 1, column=y, sticky=N + S + E + W)
-                self.boxes[i]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
-                self.boxes[i]['button'].bind('<Button-3>', self.rclick_wrapper(x, y))
         if is_ai:
             self.controller = AiController(game_board,
                                            self.open_box,
                                            self.highlight,
                                            self.highlight_sec,
                                            self.add_flag)
-
-    def lclick_wrapper(self, x: int, y: int):
-
-        return lambda Button: self.open_box((x, y))
-
-    def rclick_wrapper(self, x: int, y: int):
-
-        return lambda Button: self.add_flag((x, y))
+        else:
+            self.controller = UiController(game_board,
+                                           self.boxes,
+                                           self.open_box,
+                                           self.add_flag)
 
     def open_box(self, pos):
         x = pos[0]
@@ -97,9 +93,22 @@ class Board:
         changed_nodes = self.game_board.discover(value)
 
         if value.node_data.mine:
-            pos = value.pos
-            index = pos[0] * self.size[0] + pos[1]
-            self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
+            for x in range(self.size[0]):
+                for y in range(self.size[1]):
+                    v = self.game_board.get_graph_nodes_as_list()[x][y]
+                    self.game_board.discover(v)
+                    pos = v.pos
+                    index = pos[0] * self.size[0] + pos[1]
+                    if v.node_data.mine:
+                        if v == value:
+                            self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
+                        else:
+                            if not self.boxes[index]['isFlagged']:
+                                self.boxes[index]['button'].configure(text="*", fg="black")
+                    else:
+                        if self.boxes[index]['isFlagged']:
+                            self.boxes[index]['button'].configure(fg="red")
+
             self.gameover()
         elif value.node_data.weight >= 0:
             for changed_node in changed_nodes:
@@ -109,8 +118,9 @@ class Board:
                     weight = ' '
                 index = pos[0] * self.size[0] + pos[1]
                 self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
-                self.boxes[index]['button'].unbind('<Button-1>')
-                self.boxes[index]['button'].unbind('<Button-3>')
+                if not self.is_ai:
+                    self.boxes[index]['button'].unbind('<Button-1>')
+                    self.boxes[index]['button'].unbind('<Button-3>')
                 if changed_node not in self.clickedNodes:
                     self.clickedNodes.append(changed_node)
                     self.clicks += 1
@@ -134,7 +144,8 @@ class Board:
         elif self.boxes[index]['isFlagged']:
             self.boxes[index]['button'].configure(text=" ")
             self.boxes[index]['isFlagged'] = False
-            self.boxes[index]['button'].bind('<Button-1>', self.lclick_wrapper(x, y))
+            if not self.is_ai:
+                self.boxes[index]['button'].bind('<Button-1>', self.controller.lclick_wrapper(x, y))
             self.flags -= 1
 
         # Update the flags count
@@ -155,7 +166,8 @@ class Board:
         if answer == "yes":
             self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
-            self.master.destroy()
+            # self.master.destroy()
+            sys.exit(0)
 
     # Show the player that he won!
     def victory(self):
@@ -184,7 +196,8 @@ class Board:
         if answer == "yes":
             self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
-            self.master.destroy()
+            # self.master.destroy()
+            sys.exit(0)
 
     def highlight(self, pos):
         index = pos[0] * self.size[0] + pos[1]
