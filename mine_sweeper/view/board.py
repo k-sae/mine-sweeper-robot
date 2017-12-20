@@ -9,6 +9,7 @@ from mine_sweeper.controller.ai_controller import AiController
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.view.colors import colors
 from mine_sweeper.model.node import Node
+import os
 
 
 class Board:
@@ -151,8 +152,8 @@ class Board:
 
     # Show the player that he lose!
     def gameover(self):
-        self.master.after_cancel(self.update_timer_id)
         self.game_state = -1
+        self.master.after_cancel(self.update_timer_id)
         self.controller.wait_till_ai_finish()
         showinfo("Game Over", "You Lose!")
         answer = askquestion("Play again?", "Do you want to play again?")
@@ -160,13 +161,14 @@ class Board:
             self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
             # self.master.destroy()
-            sys.exit(0)
+            # sys.exit(0)
+            os._exit(0)
 
     # Show the player that he won!
     def victory(self):
         self.game_state = 1
-        self.controller.wait_till_ai_finish()
         self.master.after_cancel(self.update_timer_id)
+        self.controller.wait_till_ai_finish()
         showinfo("Victory!", "You Win!")
 
         try:
@@ -191,7 +193,8 @@ class Board:
             self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
             # self.master.destroy()
-            sys.exit(0)
+            # sys.exit(0)
+            os._exit(0)
 
     def highlight(self, node):
         index = node.pos[0] * self.size[1] + node.pos[1]
