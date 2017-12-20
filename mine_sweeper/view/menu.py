@@ -49,4 +49,4 @@ class Menu:
         self.frame.destroy()
         game_board = GameBoard.get_instance()
         game_board.generate_initial_state(height, width)
-        Board(self.master, (width, height), game_board, is_ai)
+        Board(self.master, (height, width), game_board, is_ai)

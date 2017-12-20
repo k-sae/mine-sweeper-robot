@@ -9,6 +9,7 @@ from mine_sweeper.controller.ai_controller import AiController
 from mine_sweeper.controller.game_board import GameBoard
 from mine_sweeper.view.colors import colors
 from mine_sweeper.model.node import Node
+import os
 
 
 class Board:
@@ -55,10 +56,10 @@ class Board:
         # get graph nodes
         # Create boxes upon the game size
         for x in range(self.size[0]):
-            Grid.columnconfigure(frame, x, weight=1)
+            Grid.rowconfigure(frame, x + 1, weight=1)
             for y in range(self.size[1]):
                 i = len(self.boxes)
-                Grid.rowconfigure(frame, y + 1, weight=1)
+                Grid.columnconfigure(frame, y, weight=1)
                 self.boxes.append({
                     "button": Button(frame, font='TkDefaultFont 20 bold', text=" ", bg="darkgrey"),
                     "isFlagged": False
@@ -91,7 +92,7 @@ class Board:
                 for y in range(self.size[1]):
                     value = self.game_board.get_graph_nodes_as_list()[x][y]
                     self.game_board.discover(value)
-                    index = value.pos[0] * self.size[0] + value.pos[1]
+                    index = value.pos[0] * self.size[1] + value.pos[1]
                     if value.node_data.mine:
                         if value == node:
                             self.boxes[index]['button'].configure(text="*", fg="red", bg="lightgrey")
@@ -102,14 +103,13 @@ class Board:
                         if self.boxes[index]['isFlagged']:
                             self.boxes[index]['button'].configure(fg="red")
 
-            ai_thread = Thread(target=self.gameover, args=())
-            ai_thread.start()
+            self.gameover()
         elif node.node_data.weight >= 0:
             for changed_node in changed_nodes:
                 weight = changed_node.node_data.weight
                 if weight == 0:
                     weight = ' '
-                index = changed_node.pos[0] * self.size[0] + changed_node.pos[1]
+                index = changed_node.pos[0] * self.size[1] + changed_node.pos[1]
                 self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
                 if not self.is_ai:
                     self.boxes[index]['button'].unbind('<Button-1>')
@@ -120,12 +120,11 @@ class Board:
 
             # Check for victory
             if self.clicks == (self.size[0] * self.size[1] - self.mines):
-                ai_thread = Thread(target=self.victory, args=())
-                ai_thread.start()
+                self.victory()
         return changed_nodes
 
     def add_flag(self, node):
-        index = node.pos[0] * self.size[0] + node.pos[1]
+        index = node.pos[0] * self.size[1] + node.pos[1]
         # If this box not left clicked, mark it as a flag
         if not self.boxes[index]['isFlagged']:
             self.boxes[index]['button'].configure(text="F")
@@ -151,21 +150,20 @@ class Board:
 
     # Show the player that he lose!
     def gameover(self):
-        self.master.after_cancel(self.update_timer_id)
         self.game_state = -1
-        self.controller.wait_till_ai_finish()
+        self.master.after_cancel(self.update_timer_id)
         showinfo("Game Over", "You Lose!")
         answer = askquestion("Play again?", "Do you want to play again?")
         if answer == "yes":
             self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
             # self.master.destroy()
-            sys.exit(0)
+            # sys.exit(0)
+            os._exit(0)
 
     # Show the player that he won!
     def victory(self):
         self.game_state = 1
-        self.controller.wait_till_ai_finish()
         self.master.after_cancel(self.update_timer_id)
         showinfo("Victory!", "You Win!")
 
@@ -191,12 +189,13 @@ class Board:
             self.__init__(self.master, self.size, self.game_board, self.is_ai)
         else:
             # self.master.destroy()
-            sys.exit(0)
+            # sys.exit(0)
+            os._exit(0)
 
     def highlight(self, node):
-        index = node.pos[0] * self.size[0] + node.pos[1]
+        index = node.pos[0] * self.size[1] + node.pos[1]
         self.boxes[index]['button'].configure(bg="yellow")
 
     def highlight_sec(self, node):
-        index = node.pos[0] * self.size[0] + node.pos[1]
+        index = node.pos[0] * self.size[1] + node.pos[1]
         self.boxes[index]['button'].configure(bg="green")
