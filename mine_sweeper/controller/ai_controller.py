@@ -60,6 +60,7 @@ class AiController:
         # holds the nodes that are less likely to be mines
         self.high_priority_nodes = []
         self.ai_thread = Thread(target=self.start_ai_solver, args=())
+        self.ai_thread.setDaemon(True)
         self.ai_thread.start()
 
     def start_ai_solver(self):
