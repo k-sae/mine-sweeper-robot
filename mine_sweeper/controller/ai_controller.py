@@ -118,7 +118,7 @@ class AiController:
                 self.check_and_remove_weight_node(node)
                 for neighbour in self.game_board.game_graph.m_graph[node]:
                     # self.board.highlight_sec(neighbour.pos)
-                    if neighbour.node_data is not None:
+                    if neighbour.node_data is not None and neighbour not in self.exiled_nodes:
                         # send  node   descoverd before
                         self.back_track_nodes(neighbour)
         else:
