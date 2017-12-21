@@ -76,7 +76,7 @@ class AiController:
 
         while self.game_board.game_state == 0:
             self.start_discovering()
-            # time.sleep(0.5)
+            time.sleep(1)
         self.ai_state = 1
         self.duration = time.time() - start_time
 
@@ -162,7 +162,7 @@ class AiController:
     # TODO
     def discover_rand_node(self):
 
-        # print("choosing a random node")
+        print("choosing a random node")
         if len(self.nodes_weighted) > 0:
             # node = sorted(self.nodes_weighted.items(), key=operator.itemgetter(0))[0]
             node = self.choose_node()
