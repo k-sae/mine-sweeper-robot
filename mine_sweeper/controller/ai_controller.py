@@ -103,8 +103,6 @@ class AiController:
         else:
             for node in self.high_priority_nodes:
                 if node not in self.mine_vault:
-                    self.discover_node(node)
-
                     self.check_and_remove_weight_node(node)
                     self.discover_node(node)
 
@@ -124,6 +122,7 @@ class AiController:
                         # send  node   descoverd before
                         self.back_track_nodes(neighbour)
         else:
+            self.back_track_nodes(parent)
             self.estimate(nodes, parent)
 
     def back_track_nodes(self, node):
