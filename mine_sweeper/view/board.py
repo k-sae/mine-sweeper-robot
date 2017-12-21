@@ -106,15 +106,16 @@ class Board:
             self.gameover()
         elif node.node_data.weight >= 0:
             for changed_node in changed_nodes:
-                weight = changed_node.node_data.weight
-                if weight == 0:
-                    weight = ' '
-                index = changed_node.pos[0] * self.size[1] + changed_node.pos[1]
-                self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
-                if not self.is_ai:
-                    self.boxes[index]['button'].unbind('<Button-1>')
-                    self.boxes[index]['button'].unbind('<Button-3>')
                 if changed_node not in self.clickedNodes:
+                    weight = changed_node.node_data.weight
+                    if weight == 0:
+                        weight = ' '
+                    index = changed_node.pos[0] * self.size[1] + changed_node.pos[1]
+                    self.boxes[index]['button'].configure(text=weight, bg="lightgrey", fg=colors[weight])
+                    if not self.is_ai:
+                        self.boxes[index]['button'].unbind('<Button-1>')
+                        self.boxes[index]['button'].unbind('<Button-3>')
+
                     self.clickedNodes.append(changed_node)
                     self.clicks += 1
 
